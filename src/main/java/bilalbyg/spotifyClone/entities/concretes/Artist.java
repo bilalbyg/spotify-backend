@@ -28,11 +28,11 @@ public class Artist {
 	@Column(name="artist_id")
 	private int artistId;
 	
-	@Column(name="name")
-	private String name;
+	@Column(name="artist_name")
+	private String artistName;
 	
-	@Column(name="artist_image_url")
-	private String artistImageUrl;
+	@Column(name="artist_cover_image_url")
+	private String artistCoverImageUrl;
 	
 	@OneToMany(mappedBy="artist")
 	private List<Album> albums;

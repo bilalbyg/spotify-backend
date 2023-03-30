@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import bilalbyg.spotifyClone.entities.concretes.Song;
 
 public interface SongRepository extends JpaRepository<Song,Integer>{
-	Song getByName(String name);
+	Song getBySongName(String songName);
 	Song getById(int id);
-	List<Song> getByNameContains(String name);
-	List<Song> getByNameStartsWith(String name);
+	List<Song> getBySongNameContains(String name);
+	List<Song> getBySongNameStartsWith(String name);
 }

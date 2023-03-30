@@ -24,8 +24,8 @@ public class Song {
 	@Column(name="song_id")
 	private int songId;
 	
-	@Column(name="name")
-	private String name;
+	@Column(name="song_name")
+	private String songName;
 	
 	@Column(name="duration")
 	private double duration;
@@ -33,6 +33,10 @@ public class Song {
 	@Column(name="song_url")
 	private String songUrl;
 	
+	@ManyToOne()
+	@JoinColumn(name="category_id")
+	private Category category;
+
 	@ManyToOne()
 	@JoinColumn(name="album_id")
 	private Album album;

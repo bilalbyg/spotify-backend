@@ -34,7 +34,7 @@ public class ArtistManager implements ArtistService{
 	@Override
 	public DataResult<Artist> getByName(String name) {
 		// TODO Auto-generated method stub
-		return new SuccessDataResult<Artist>(this.artistRepository.getByName(name), "getByName succeed");
+		return new SuccessDataResult<Artist>(this.artistRepository.getByArtistName(name), "getByName succeed");
 	}
 
 	@Override
@@ -46,13 +46,27 @@ public class ArtistManager implements ArtistService{
 	@Override
 	public DataResult<List<Artist>> getByNameContains(String name) {
 		// TODO Auto-generated method stub
-		return new SuccessDataResult<List<Artist>>(this.artistRepository.getByNameContains(name), "getByNameContains succeed");
+		return new SuccessDataResult<List<Artist>>(this.artistRepository.getByArtistNameContains(name), "getByNameContains succeed");
 	}
 
 	@Override
 	public DataResult<List<Artist>> getByNameStartsWith(String name) {
 		// TODO Auto-generated method stub
-		return new SuccessDataResult<List<Artist>>(this.artistRepository.getByNameStartsWith(name), "getByNameStartsWith succeed");
+		return new SuccessDataResult<List<Artist>>(this.artistRepository.getByArtistNameStartsWith(name), "getByNameStartsWith succeed");
+	}
+
+	@Override
+	public Result update(Artist artist) { // add id field to update requests
+		// TODO Auto-generated method stub
+		this.artistRepository.save(artist);
+		return new SuccessResult("Artist updated");
+	}
+
+	@Override
+	public Result delete(int id) {
+		// TODO Auto-generated method stub
+		this.artistRepository.deleteById(id);
+		return new SuccessResult("Artist deleted");
 	}
 
 }

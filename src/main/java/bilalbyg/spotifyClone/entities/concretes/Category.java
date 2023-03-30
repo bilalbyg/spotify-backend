@@ -3,46 +3,41 @@ package bilalbyg.spotifyClone.entities.concretes;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Table(name="albums")
+@Table(name="categories")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler","songs"})
-public class Album{
+public class Category {
+	
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="album_id")
-	private int albumId;
+	@Column(name="category_id")
+	private int categoryId;
 	
-	@Column(name="album_name")
-	private String albumName;
+	@Column(name="category_name")
+	private String categoryName;
 	
-	@Column(name="release_year")
-	private String releaseYear;
+	@Column(name="category_cover_img_url")
+	private String categoryCoverImageUrl;
 	
-	@Column(name="album_cover_image_url")
-	private String albumCoverImageUrl;
+	@Column(name="category_background_color")
+	private String categoryBackgroundColor;
 	
-	@OneToMany(mappedBy="album")
+	@OneToMany(mappedBy="category")
 	private List<Song> songs;
-	
-	@ManyToOne()
-	@JoinColumn(name="artist_id")
-	private Artist artist;
-
 }

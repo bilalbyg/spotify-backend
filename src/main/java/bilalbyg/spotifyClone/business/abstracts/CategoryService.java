@@ -4,11 +4,11 @@ import java.util.List;
 
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
-import bilalbyg.spotifyClone.entities.concretes.Album;
+import bilalbyg.spotifyClone.entities.concretes.Category;
 
-public interface AlbumService {
-	DataResult<List<Album>> getAll();
-	Result add(Album album);
-	Result update(Album album);
+public interface CategoryService {
+	Result add(Category category);
+	Result update(Category category);
 	Result delete(int id);
+	DataResult<List<Category>> getAll();
 }

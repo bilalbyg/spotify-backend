@@ -8,8 +8,8 @@ import bilalbyg.spotifyClone.entities.concretes.Artist;
 
 public interface ArtistRepository extends JpaRepository<Artist, Integer>{
 	// specified queries
-	Artist getByName(String name);
+	Artist getByArtistName(String name);
 	Artist getById(int id);
-	List<Artist> getByNameContains(String name);
-	List<Artist> getByNameStartsWith(String name);
+	List<Artist> getByArtistNameContains(String name);
+	List<Artist> getByArtistNameStartsWith(String name);
 }

@@ -7,8 +7,8 @@ import bilalbyg.spotifyClone.entities.concretes.Album;
 
 
 public interface AlbumRepository extends JpaRepository<Album, Integer>{
-	Album getByName(String name);
+	Album getByAlbumName(String name);
 	Album getById(int id);
-	List<Album> getByNameContains(String name);
-	List<Album> getByNameStartsWith(String name);
+	List<Album> getByAlbumNameContains(String name);
+	List<Album> getByAlbumNameStartsWith(String name);
 }
