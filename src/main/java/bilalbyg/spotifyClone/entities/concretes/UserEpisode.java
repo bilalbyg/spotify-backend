@@ -1,6 +1,5 @@
 package bilalbyg.spotifyClone.entities.concretes;
 
-import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,28 +11,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="playlists")
-public class Playlist {
-	
+@Table(name="user_episodes")
+public class UserEpisode {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="playlist_id")
-	private int playlistId;
+	@Column(name="user_episode_id")
+	private int userEpisodeId;
 	
-	@Column(name="playlist_name")
-	private String playlistName;
+	@Column(name="user_id")
+	private int userId;
 	
-	@Column(name="playlist_user_id")
-	private int playlistUserId;
-	
-	@Column(name="playlist_cover_image_url")
-	private String playlistCoverImageUrl;
-	
-	@Column(name="playlist_songs")
-	private List<Integer> playlistSongs;
+	@Column(name="episode_id")
+	private int episodeId;
 }

@@ -44,4 +44,18 @@ public class SongManager implements SongService{
 		this.songRepository.deleteById(id);
 		return new SuccessResult("Song deleted");
 	}
+
+	@Override
+	public DataResult<Song> getById(int id) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<Song>(songRepository.findById(id).orElse(null));
+	}
+
+	@Override
+	public DataResult<List<Song>> getSongsById(List<Integer> ids) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<List<Song>>(songRepository.findAllById(ids));
+	}
+	
+	
 }
