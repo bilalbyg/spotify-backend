@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ import bilalbyg.spotifyClone.business.abstracts.PlaylistService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.entities.concretes.Playlist;
-
+import bilalbyg.spotifyClone.entities.concretes.Song;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -59,7 +60,7 @@ public class PlaylistsController {
 	}
 	
 	@PutMapping("/update")
-	public Result update(@RequestBody Playlist playlist) {
+	public DataResult<Playlist> update(@RequestBody Playlist playlist) {
 		return playlistService.update(playlist);
 	}
 	
@@ -77,4 +78,9 @@ public class PlaylistsController {
                        @RequestParam("file") MultipartFile file) {
     	return playlistService.uploadPlaylistCoverImageAndUpdate(playlistId, file);
     }
+    
+	@DeleteMapping("/delete")
+	public Result delete(@RequestParam int playlistId) {
+		return playlistService.delete(playlistId);
+	}
 }

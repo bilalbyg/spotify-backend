@@ -47,4 +47,10 @@ public class CategoryManager implements CategoryService{
 		return new SuccessResult("Category deleted");
 	}
 
+	@Override
+	public DataResult<Category> getByCategoryId(int categoryId) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<Category>(categoryRepository.findById(categoryId).orElse(null));
+	}
+
 }

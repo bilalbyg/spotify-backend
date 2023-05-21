@@ -10,4 +10,6 @@ public interface SongRepository extends JpaRepository<Song,Integer>{
 	Song getById(int id);
 	List<Song> getBySongNameContains(String name);
 	List<Song> getBySongNameStartsWith(String name);
+	List<Song> getByAlbum_AlbumId(int albumId);
+	List<Song> getByCategory_CategoryId(int categoryId);
 }

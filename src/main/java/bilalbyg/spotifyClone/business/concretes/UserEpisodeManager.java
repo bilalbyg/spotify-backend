@@ -8,6 +8,7 @@ import bilalbyg.spotifyClone.business.abstracts.UserEpisodeService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.core.utilities.SuccessDataResult;
+import bilalbyg.spotifyClone.core.utilities.SuccessResult;
 import bilalbyg.spotifyClone.dataAccess.abstracts.UserEpisodeRepository;
 import bilalbyg.spotifyClone.entities.concretes.UserEpisode;
 import lombok.AllArgsConstructor;
@@ -25,21 +26,35 @@ public class UserEpisodeManager implements UserEpisodeService{
 	}
 
 	@Override
-	public Result add(UserEpisode userEpisode) {
+	public DataResult<UserEpisode> add(UserEpisode userEpisode) {
 		// TODO Auto-generated method stub
-		return null;
+		return new SuccessDataResult<UserEpisode>(userEpisodeRepository.save(userEpisode), "Episode added to user episodes."); 
 	}
 
 	@Override
 	public Result update(UserEpisode userEpisode) {
 		// TODO Auto-generated method stub
-		return null;
+		userEpisodeRepository.save(userEpisode);
+		return new SuccessResult("User episode updated");
 	}
 
 	@Override
 	public Result delete(int id) {
 		// TODO Auto-generated method stub
-		return null;
+		userEpisodeRepository.deleteById(id);
+		return new SuccessResult("User episode deleted");
+	}
+
+	@Override
+	public DataResult<List<UserEpisode>> getByUserId(int userId) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<List<UserEpisode>>(userEpisodeRepository.getByUserId(userId));
+	}
+
+	@Override
+	public DataResult<UserEpisode> getByUserIdAndEpisodeId(int userId, int episodeId) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<UserEpisode>(userEpisodeRepository.getByUserIdAndEpisodeId(userId, episodeId));
 	}
 
 }

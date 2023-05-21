@@ -10,6 +10,7 @@ import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.core.utilities.SuccessDataResult;
 import bilalbyg.spotifyClone.core.utilities.SuccessResult;
 import bilalbyg.spotifyClone.dataAccess.abstracts.PodcastRepository;
+import bilalbyg.spotifyClone.entities.concretes.Album;
 import bilalbyg.spotifyClone.entities.concretes.Podcast;
 import lombok.AllArgsConstructor;
 
@@ -46,4 +47,15 @@ public class PodcastManager implements PodcastService{
 		return new SuccessResult();	
 	}
 
+	@Override
+	public DataResult<Podcast> getByPodcastId(int podcastId) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<Podcast>(podcastRepository.findById(podcastId).orElse(null));
+	}
+	
+	@Override
+	public DataResult<List<Podcast>> getPodcastsById(List<Integer> ids) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<List<Podcast>>(podcastRepository.findAllById(ids));
+	}
 }

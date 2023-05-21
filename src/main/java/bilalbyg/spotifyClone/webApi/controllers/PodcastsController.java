@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import bilalbyg.spotifyClone.business.abstracts.PodcastService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
+import bilalbyg.spotifyClone.entities.concretes.Album;
 import bilalbyg.spotifyClone.entities.concretes.Podcast;
+import bilalbyg.spotifyClone.entities.concretes.Song;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -47,5 +49,15 @@ public class PodcastsController {
 	@DeleteMapping("/delete")
 	public Result update(@RequestParam int id) {
 		return podcastService.delete(id);
+	}
+	
+	@GetMapping("/getByPodcastId")
+	public DataResult<Podcast> getPodcastById(@RequestParam int podcastId){
+		return podcastService.getByPodcastId(podcastId);
+	}
+	
+	@GetMapping("/getPodcastsById")
+	public DataResult<List<Podcast>> getPodcastsById(@RequestParam List<Integer> ids){
+		return podcastService.getPodcastsById(ids);
 	}
 }

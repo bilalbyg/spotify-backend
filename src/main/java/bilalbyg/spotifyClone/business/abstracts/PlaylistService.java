@@ -15,7 +15,7 @@ public interface PlaylistService {
 	DataResult<Playlist> getByPlaylistName(String playlistName);
 	void updatePlaylistCoverImageUrl(int playlistId, String playlistCoverImageUrl);
 	DataResult<Playlist> add(Playlist playlist);
-	Result update(Playlist playlist);
-	Result delete(int id);
+	DataResult<Playlist> update(Playlist playlist);
+	Result delete(int playlistId);
 	DataResult<Playlist> uploadPlaylistCoverImageAndUpdate(int playlistId, MultipartFile file);
 }

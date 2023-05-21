@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import bilalbyg.spotifyClone.business.abstracts.ArtistService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
+import bilalbyg.spotifyClone.entities.concretes.Album;
 import bilalbyg.spotifyClone.entities.concretes.Artist;
 import lombok.AllArgsConstructor;
 
@@ -43,8 +44,8 @@ public class ArtistsController {
 	}
 	
 	@GetMapping("/getById")
-	public DataResult<Artist> getById(@RequestParam int id){
-		return this.artistService.getById(id);
+	public DataResult<Artist> getById(@RequestParam int artistId){
+		return artistService.getById(artistId);
 	}
 	
 	@GetMapping("/getByNameContains")
@@ -60,5 +61,10 @@ public class ArtistsController {
 	@PutMapping("/update")
 	public Result update(@RequestBody Artist artist) {
 		return this.artistService.update(artist);
+	}
+	
+	@GetMapping("/getArtistsById")
+	public DataResult<List<Artist>> getArtistsById(@RequestParam List<Integer> ids){
+		return artistService.getArtistsById(ids);
 	}
 }

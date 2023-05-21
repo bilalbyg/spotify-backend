@@ -8,6 +8,7 @@ import bilalbyg.spotifyClone.entities.concretes.UserLikedSong;
 
 public interface UserLikedSongService {
 	DataResult<List<UserLikedSong>> getAll();
+	DataResult<List<UserLikedSong>> getByUserId(int userId);
 	DataResult<UserLikedSong> getByUserIdAndSongId(int userId, int songId);
 	Result add(UserLikedSong userLikedSong);
 	Result update(UserLikedSong userLikedSong);

@@ -18,6 +18,7 @@ import bilalbyg.spotifyClone.business.abstracts.CategoryService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.entities.concretes.Category;
+import bilalbyg.spotifyClone.entities.concretes.Song;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -36,6 +37,11 @@ public class CategoriesController {
 	@GetMapping("/getall")
 	public DataResult<List<Category>> getAll() {
 		return this.categoryService.getAll(); 
+	}
+	
+	@GetMapping("/getByCategoryId")
+	public DataResult<Category> getById(@RequestParam int categoryId){
+		return categoryService.getByCategoryId(categoryId);
 	}
 	
 	@PutMapping("/update")

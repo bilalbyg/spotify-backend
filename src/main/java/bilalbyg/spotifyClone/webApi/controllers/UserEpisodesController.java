@@ -19,7 +19,9 @@ import bilalbyg.spotifyClone.business.abstracts.UserEpisodeService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.entities.concretes.Episode;
+import bilalbyg.spotifyClone.entities.concretes.Playlist;
 import bilalbyg.spotifyClone.entities.concretes.UserEpisode;
+import bilalbyg.spotifyClone.entities.concretes.UserLikedPodcast;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -30,15 +32,25 @@ public class UserEpisodesController {
 	
 	private UserEpisodeService userEpisodeService;
 	
-//	@PostMapping("/add")
-//	@ResponseStatus(code=HttpStatus.CREATED)
-//	public Result add(@RequestBody Episode episode) {
-//		return episodeService.add(episode);
-//	}
+	@PostMapping("/add")
+	@ResponseStatus(code=HttpStatus.CREATED)
+	public DataResult<UserEpisode> add(@RequestBody UserEpisode userEpisode) {
+		return userEpisodeService.add(userEpisode);
+	}
 	
 	@GetMapping("/getall")
 	public DataResult<List<UserEpisode>> getAll(){
 		return userEpisodeService.getAll();
+	}
+	
+	@GetMapping("/getByUserIdAndEpisodeId")
+	public DataResult<UserEpisode> getByUserIdAndEpisodeId(@RequestParam int userId,@RequestParam int episodeId){
+		return userEpisodeService.getByUserIdAndEpisodeId(userId, episodeId);
+	}
+	
+	@GetMapping("/getByUserId")
+	public DataResult<List<UserEpisode>> getByPlaylistUserId(@RequestParam int userId){
+		return userEpisodeService.getByUserId(userId);
 	}
 	
 //	@PutMapping("/update")
@@ -46,9 +58,9 @@ public class UserEpisodesController {
 //		return episodeService.update(episode);
 //	}
 //	
-//	@DeleteMapping("/delete")
-//	public Result update(@RequestParam int id) {
-//		return episodeService.delete(id);
-//	}
+	@DeleteMapping("/delete")
+	public Result update(@RequestParam int id) {
+		return userEpisodeService.delete(id);
+	}
 }
 

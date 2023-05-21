@@ -4,6 +4,7 @@ import java.util.List;
 
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
+import bilalbyg.spotifyClone.entities.concretes.Album;
 import bilalbyg.spotifyClone.entities.concretes.Artist;
 
 public interface ArtistService {
@@ -15,4 +16,6 @@ public interface ArtistService {
 	DataResult<Artist> getById(int id);
 	DataResult<List<Artist>> getByNameContains(String name);
 	DataResult<List<Artist>> getByNameStartsWith(String name);
+	DataResult<List<Artist>> getArtistsById(List<Integer> ids);
+
 }

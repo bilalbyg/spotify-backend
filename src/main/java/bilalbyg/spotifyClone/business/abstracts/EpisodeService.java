@@ -10,6 +10,7 @@ public interface EpisodeService {
 	DataResult<List<Episode>> getAll();
 	DataResult<Episode> getById(int id);
 	DataResult<List<Episode>> getEpisodesById(List<Integer> ids);
+	DataResult<List<Episode>> getByPodcastId(int podcastId);
 	Result add(Episode episode);
 	Result update(Episode episode);
 	Result delete(int id);

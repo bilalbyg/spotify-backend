@@ -9,6 +9,7 @@ import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.core.utilities.SuccessDataResult;
 import bilalbyg.spotifyClone.core.utilities.SuccessResult;
 import bilalbyg.spotifyClone.dataAccess.abstracts.ArtistRepository;
+import bilalbyg.spotifyClone.entities.concretes.Album;
 import bilalbyg.spotifyClone.entities.concretes.Artist;
 import lombok.AllArgsConstructor;
 
@@ -40,7 +41,7 @@ public class ArtistManager implements ArtistService{
 	@Override
 	public DataResult<Artist> getById(int id) {
 		// TODO Auto-generated method stub
-		return new SuccessDataResult<Artist>(this.artistRepository.getById(id), "getById succeed");
+		return new SuccessDataResult<Artist>(artistRepository.findById(id).orElse(null), "getById succeed");
 	}
 
 	@Override
@@ -67,6 +68,12 @@ public class ArtistManager implements ArtistService{
 		// TODO Auto-generated method stub
 		this.artistRepository.deleteById(id);
 		return new SuccessResult("Artist deleted");
+	}
+	
+	@Override
+	public DataResult<List<Artist>> getArtistsById(List<Integer> ids) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<List<Artist>>(artistRepository.findAllById(ids));
 	}
 
 }

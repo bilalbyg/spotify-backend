@@ -34,6 +34,9 @@ public class Artist {
 	@Column(name="artist_cover_image_url")
 	private String artistCoverImageUrl;
 	
+	@Column(name="artist_background_image_url")
+	private String artistBackgroundImageUrl;
+	
 	@OneToMany(mappedBy="artist")
 	private List<Album> albums;
 }

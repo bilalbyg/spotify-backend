@@ -11,6 +11,7 @@ import bilalbyg.spotifyClone.core.utilities.SuccessDataResult;
 import bilalbyg.spotifyClone.core.utilities.SuccessResult;
 import bilalbyg.spotifyClone.dataAccess.abstracts.AlbumRepository;
 import bilalbyg.spotifyClone.entities.concretes.Album;
+import bilalbyg.spotifyClone.entities.concretes.Song;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -44,6 +45,24 @@ public class AlbumManager implements AlbumService{
 		// TODO Auto-generated method stub
 		this.albumRepository.deleteById(id);
 		return new SuccessResult("Album deleted");
+	}
+
+	@Override
+	public DataResult<Album> getByAlbumId(int albumId) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<Album>(albumRepository.findById(albumId).orElse(null));
+	}
+
+	@Override
+	public DataResult<List<Album>> getByArtistId(int artistId) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<List<Album>>(albumRepository.getByArtist_ArtistId(artistId));
+	}
+
+	@Override
+	public DataResult<List<Album>> getAlbumsById(List<Integer> ids) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<List<Album>>(albumRepository.findAllById(ids));
 	}
 
 }

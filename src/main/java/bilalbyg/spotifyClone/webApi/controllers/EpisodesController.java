@@ -59,4 +59,9 @@ public class EpisodesController {
 	public DataResult<List<Episode>> getEpisodesById(@RequestParam List<Integer> ids){
 		return episodeService.getEpisodesById(ids);
 	}
+	
+	@GetMapping("/getByPodcastId")
+	public DataResult<List<Episode>> getByPodcastId(@RequestParam int podcastId){
+		return episodeService.getByPodcastId(podcastId);
+	}
 }

@@ -51,4 +51,14 @@ public class SongsController {
 	public DataResult<List<Song>> getSongsById(@RequestParam List<Integer> ids){
 		return songService.getSongsById(ids);
 	}
+	
+	@GetMapping("/getSongsByAlbumId")
+	public DataResult<List<Song>> getSongsByAlbumId(@RequestParam int albumId){
+		return songService.getSongsByAlbumId(albumId);
+	}
+	
+	@GetMapping("/getSongsByCategoryId")
+	public DataResult<List<Song>> getSongsByCategoryId(@RequestParam int categoryId){
+		return songService.getSongsByCategoryId(categoryId);
+	}
 }

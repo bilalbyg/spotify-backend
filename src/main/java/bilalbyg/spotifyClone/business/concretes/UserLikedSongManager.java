@@ -51,4 +51,10 @@ public class UserLikedSongManager implements UserLikedSongService{
 		return new SuccessDataResult<UserLikedSong>(userLikedSongRepository.getByUserIdAndSongId(userId, songId));
 	}
 
+	@Override
+	public DataResult<List<UserLikedSong>> getByUserId(int userId) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<List<UserLikedSong>>(userLikedSongRepository.getByUserId(userId));
+	}
+
 }

@@ -56,6 +56,18 @@ public class SongManager implements SongService{
 		// TODO Auto-generated method stub
 		return new SuccessDataResult<List<Song>>(songRepository.findAllById(ids));
 	}
+
+	@Override
+	public DataResult<List<Song>> getSongsByAlbumId(int albumId) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<List<Song>>(songRepository.getByAlbum_AlbumId(albumId));
+	}
+
+	@Override
+	public DataResult<List<Song>> getSongsByCategoryId(int categoryId) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<List<Song>>(songRepository.getByCategory_CategoryId(categoryId));
+	}
 	
 	
 }

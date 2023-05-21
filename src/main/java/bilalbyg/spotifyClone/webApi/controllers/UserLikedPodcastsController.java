@@ -13,49 +13,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import bilalbyg.spotifyClone.business.abstracts.UserLikedSongService;
+import bilalbyg.spotifyClone.business.abstracts.UserLikedPodcastService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
-import bilalbyg.spotifyClone.entities.concretes.UserLikedSong;
+import bilalbyg.spotifyClone.entities.concretes.UserLikedPodcast;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/api/user-liked-songs")
+@RequestMapping("/api/user-liked-podcasts")
 @AllArgsConstructor
 @CrossOrigin
-public class UserLikedSongsController {
+public class UserLikedPodcastsController {
 	
-	private UserLikedSongService userLikedSongService;
+	private UserLikedPodcastService userLikedPodcastService;
 	
 	@PostMapping("/add")
 	@ResponseStatus(code=HttpStatus.CREATED)
-	public Result add(@RequestBody UserLikedSong userLikedSong) {
-		return userLikedSongService.add(userLikedSong);
+	public DataResult<UserLikedPodcast> add(@RequestBody UserLikedPodcast userLikedPodcast) {
+		return userLikedPodcastService.add(userLikedPodcast);
 	}
 	
 	@GetMapping("/getall")
-	public DataResult<List<UserLikedSong>> getAll(){
-		return userLikedSongService.getAll();
+	public DataResult<List<UserLikedPodcast>> getAll(){
+		return userLikedPodcastService.getAll();
 	}
 	
-	@GetMapping("/getByUserIdAndSongId")
-	public DataResult<UserLikedSong> getByUserIdAndSongId(@RequestParam int userId,@RequestParam int songId){
-		return userLikedSongService.getByUserIdAndSongId(userId, songId);
-	}
-	
-	@GetMapping("/getByUserId")
-	public DataResult<List<UserLikedSong>> getByUserId(@RequestParam int userId){
-		return userLikedSongService.getByUserId(userId);
-	}
-	
-//	@PutMapping("/update")
-//	public Result update(@RequestBody Episode episode) {
-//		return episodeService.update(episode);
-//	}
-//	
 	@DeleteMapping("/delete")
 	public Result delete(@RequestParam int id) {
-		return userLikedSongService.delete(id);
+		return userLikedPodcastService.delete(id);
+	}
+	
+	@GetMapping("/getByUserIdAndPodcastId")
+	public DataResult<UserLikedPodcast> getByUserIdAndPodcastId(@RequestParam int userId,@RequestParam int podcastId){
+		return userLikedPodcastService.getByUserIdAndPodcastId(userId, podcastId);
 	}
 }
 

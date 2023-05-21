@@ -48,16 +48,15 @@ public class PlaylistManager implements PlaylistService{
 	}
 
 	@Override
-	public Result update(Playlist playlist) {
+	public DataResult<Playlist> update(Playlist playlist) {
 		// TODO Auto-generated method stub
-		playlistRepository.save(playlist);
-		return new SuccessResult("Playlist updated");
+		return new SuccessDataResult<Playlist>(playlistRepository.save(playlist),"Playlist updated");
 	}
 
 	@Override
-	public Result delete(int id) {
+	public Result delete(int playlistId) {
 		// TODO Auto-generated method stub
-		playlistRepository.deleteById(id);
+		playlistRepository.deleteById(playlistId);
 		return new SuccessResult("Playlist deleted");
 	}
 
@@ -103,7 +102,7 @@ public class PlaylistManager implements PlaylistService{
         String filename = String.format("%s-%s",UUID.randomUUID(), file.getOriginalFilename());
         try {
             fileStore.save(path, filename, Optional.of(metadata), file.getInputStream());
-            String playlistCoverImageUrl = "https://spotify-clone-123.s3.eu-west-2.amazonaws.com/" + playlistId + "/" + filename;
+            String playlistCoverImageUrl = YOUR_BUCKET_ADDRESS + playlistId + "/" + filename;
             updatePlaylistCoverImageUrl(playlistId, playlistCoverImageUrl);
         } catch (IOException e) {
             throw new IllegalStateException(e);

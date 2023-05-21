@@ -57,4 +57,10 @@ public class EpisodeManager implements EpisodeService{
 		// TODO Auto-generated method stub
 		return new SuccessDataResult<List<Episode>>(episodeRepository.findAllById(ids));
 	}
+
+	@Override
+	public DataResult<List<Episode>> getByPodcastId(int podcastId) {
+		// TODO Auto-generated method stub
+		return new SuccessDataResult<List<Episode>>(episodeRepository.getByPodcast_PodcastId(podcastId));
+	}
 }

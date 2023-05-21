@@ -13,4 +13,6 @@ public interface SongService {
 	Result add(Song song);
 	Result update(Song song);
 	Result delete(int id);
+	DataResult<List<Song>> getSongsByAlbumId(int albumId);
+	DataResult<List<Song>> getSongsByCategoryId(int categoryId);
 }

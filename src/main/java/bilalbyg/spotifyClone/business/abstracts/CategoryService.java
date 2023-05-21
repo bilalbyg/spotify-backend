@@ -11,4 +11,5 @@ public interface CategoryService {
 	Result update(Category category);
 	Result delete(int id);
 	DataResult<List<Category>> getAll();
+	DataResult<Category> getByCategoryId(int categoryId);
 }
