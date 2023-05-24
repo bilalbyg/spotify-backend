@@ -11,7 +11,6 @@ import bilalbyg.spotifyClone.core.utilities.SuccessDataResult;
 import bilalbyg.spotifyClone.core.utilities.SuccessResult;
 import bilalbyg.spotifyClone.dataAccess.abstracts.UserLikedAlbumRepository;
 import bilalbyg.spotifyClone.entities.concretes.UserLikedAlbum;
-import bilalbyg.spotifyClone.entities.concretes.UserLikedArtist;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

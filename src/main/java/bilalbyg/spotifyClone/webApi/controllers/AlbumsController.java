@@ -17,7 +17,6 @@ import bilalbyg.spotifyClone.business.abstracts.AlbumService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.entities.concretes.Album;
-import bilalbyg.spotifyClone.entities.concretes.Song;
 import lombok.AllArgsConstructor;
 
 @RestController

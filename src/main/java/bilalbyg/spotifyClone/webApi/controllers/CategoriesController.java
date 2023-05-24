@@ -18,7 +18,6 @@ import bilalbyg.spotifyClone.business.abstracts.CategoryService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.entities.concretes.Category;
-import bilalbyg.spotifyClone.entities.concretes.Song;
 import lombok.AllArgsConstructor;
 
 @RestController

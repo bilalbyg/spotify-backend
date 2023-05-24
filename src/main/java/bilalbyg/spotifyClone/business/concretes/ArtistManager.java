@@ -9,7 +9,6 @@ import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.core.utilities.SuccessDataResult;
 import bilalbyg.spotifyClone.core.utilities.SuccessResult;
 import bilalbyg.spotifyClone.dataAccess.abstracts.ArtistRepository;
-import bilalbyg.spotifyClone.entities.concretes.Album;
 import bilalbyg.spotifyClone.entities.concretes.Artist;
 import lombok.AllArgsConstructor;
 

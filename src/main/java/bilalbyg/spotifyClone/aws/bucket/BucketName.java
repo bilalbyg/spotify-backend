@@ -2,7 +2,7 @@ package bilalbyg.spotifyClone.aws.bucket;
 
 public enum BucketName {
 
-    PLAYLIST_COVER_IMAGE("spotify-clone-123");
+    PLAYLIST_COVER_IMAGE("BUCKET_NAME");
 
     private final String bucketName;
 

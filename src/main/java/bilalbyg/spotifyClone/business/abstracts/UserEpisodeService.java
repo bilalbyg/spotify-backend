@@ -5,7 +5,6 @@ import java.util.List;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.entities.concretes.UserEpisode;
-import bilalbyg.spotifyClone.entities.concretes.UserLikedPodcast;
 
 public interface UserEpisodeService {
 	DataResult<List<UserEpisode>> getAll();

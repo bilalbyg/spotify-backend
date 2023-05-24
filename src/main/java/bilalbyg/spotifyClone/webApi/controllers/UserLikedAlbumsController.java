@@ -14,12 +14,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import bilalbyg.spotifyClone.business.abstracts.UserLikedAlbumService;
-import bilalbyg.spotifyClone.business.abstracts.UserLikedSongService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.entities.concretes.UserLikedAlbum;
-import bilalbyg.spotifyClone.entities.concretes.UserLikedArtist;
-import bilalbyg.spotifyClone.entities.concretes.UserLikedSong;
 import lombok.AllArgsConstructor;
 
 @RestController

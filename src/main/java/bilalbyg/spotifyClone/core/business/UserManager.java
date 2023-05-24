@@ -10,7 +10,6 @@ import bilalbyg.spotifyClone.core.entities.User;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.core.utilities.SuccessDataResult;
-import bilalbyg.spotifyClone.entities.concretes.Category;
 import lombok.AllArgsConstructor;
 
 @Service

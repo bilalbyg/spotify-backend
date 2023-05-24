@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import bilalbyg.spotifyClone.entities.concretes.UserLikedAlbum;
-import bilalbyg.spotifyClone.entities.concretes.UserLikedArtist;
 import bilalbyg.spotifyClone.entities.concretes.UserLikedPodcast;
 
 public interface UserLikedPodcastRepository extends JpaRepository<UserLikedPodcast, Integer> {

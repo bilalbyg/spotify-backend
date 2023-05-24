@@ -5,7 +5,6 @@ import java.util.List;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.entities.concretes.Album;
-import bilalbyg.spotifyClone.entities.concretes.Song;
 
 public interface AlbumService {
 	DataResult<List<Album>> getAll();

@@ -4,8 +4,6 @@ import java.util.List;
 
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
-import bilalbyg.spotifyClone.entities.concretes.UserLikedAlbum;
-import bilalbyg.spotifyClone.entities.concretes.UserLikedArtist;
 import bilalbyg.spotifyClone.entities.concretes.UserLikedPodcast;
 
 public interface UserLikedPodcastService {

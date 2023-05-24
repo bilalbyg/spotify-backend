@@ -10,7 +10,6 @@ import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.core.utilities.SuccessDataResult;
 import bilalbyg.spotifyClone.core.utilities.SuccessResult;
 import bilalbyg.spotifyClone.dataAccess.abstracts.PodcastRepository;
-import bilalbyg.spotifyClone.entities.concretes.Album;
 import bilalbyg.spotifyClone.entities.concretes.Podcast;
 import lombok.AllArgsConstructor;
 

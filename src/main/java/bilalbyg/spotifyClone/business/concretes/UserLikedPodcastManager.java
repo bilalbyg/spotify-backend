@@ -4,16 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import bilalbyg.spotifyClone.business.abstracts.UserLikedAlbumService;
 import bilalbyg.spotifyClone.business.abstracts.UserLikedPodcastService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
 import bilalbyg.spotifyClone.core.utilities.SuccessDataResult;
 import bilalbyg.spotifyClone.core.utilities.SuccessResult;
-import bilalbyg.spotifyClone.dataAccess.abstracts.UserLikedAlbumRepository;
 import bilalbyg.spotifyClone.dataAccess.abstracts.UserLikedPodcastRepository;
-import bilalbyg.spotifyClone.entities.concretes.UserLikedAlbum;
-import bilalbyg.spotifyClone.entities.concretes.UserLikedArtist;
 import bilalbyg.spotifyClone.entities.concretes.UserLikedPodcast;
 import lombok.AllArgsConstructor;
 

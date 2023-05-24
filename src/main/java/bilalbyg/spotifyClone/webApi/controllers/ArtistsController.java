@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import bilalbyg.spotifyClone.business.abstracts.ArtistService;
 import bilalbyg.spotifyClone.core.utilities.DataResult;
 import bilalbyg.spotifyClone.core.utilities.Result;
-import bilalbyg.spotifyClone.entities.concretes.Album;
 import bilalbyg.spotifyClone.entities.concretes.Artist;
 import lombok.AllArgsConstructor;
 

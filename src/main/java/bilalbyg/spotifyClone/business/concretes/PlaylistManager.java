@@ -102,7 +102,7 @@ public class PlaylistManager implements PlaylistService{
         String filename = String.format("%s-%s",UUID.randomUUID(), file.getOriginalFilename());
         try {
             fileStore.save(path, filename, Optional.of(metadata), file.getInputStream());
-            String playlistCoverImageUrl = YOUR_BUCKET_ADDRESS + playlistId + "/" + filename;
+            String playlistCoverImageUrl = "https://spotify-clone-123.s3.eu-west-2.amazonaws.com/" + playlistId + "/" + filename;
             updatePlaylistCoverImageUrl(playlistId, playlistCoverImageUrl);
         } catch (IOException e) {
             throw new IllegalStateException(e);
