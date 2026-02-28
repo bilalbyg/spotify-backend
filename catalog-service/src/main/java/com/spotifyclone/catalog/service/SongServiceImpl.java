@@ -3,6 +3,8 @@ package com.spotifyclone.catalog.service;
 
 import com.spotifyclone.catalog.dto.CreateSongRequest;
 import com.spotifyclone.catalog.dto.SongResponse;
+import com.spotifyclone.catalog.event.SongCreatedEvent;
+import com.spotifyclone.catalog.event.SongEventProducer;
 import com.spotifyclone.catalog.exception.ResourceNotFoundException;
 import com.spotifyclone.catalog.model.Song;
 import com.spotifyclone.catalog.repository.SongRepository;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class SongServiceImpl implements SongService {
 
     private final SongRepository songRepository;
+    private final SongEventProducer songEventProducer;
 
     @Override
     public List<SongResponse> getAllSongs() {
@@ -48,14 +51,16 @@ public class SongServiceImpl implements SongService {
         // Veritabanına kaydet
         Song savedSong = songRepository.save(song);
 
-        // Kaydedilen veriyi tekrar DTO (Response) olarak dışarı dön
-        return new SongResponse(
+        // 2. KAFKA EVENT FIRLATMA (YENİ EKLENDİ)
+        SongCreatedEvent event = new SongCreatedEvent(
                 savedSong.getId(),
                 savedSong.getTitle(),
-                savedSong.getArtist(),
-                savedSong.getAlbumImageUrl(),
-                savedSong.getAudioUrl()
+                savedSong.getArtist()
         );
+        songEventProducer.sendSongCreatedEvent(event);
+
+        // Kaydedilen veriyi tekrar DTO (Response) olarak dışarı dön
+        return mapToResponse(savedSong);
     }
 
     @Override
@@ -64,6 +69,8 @@ public class SongServiceImpl implements SongService {
                 .map(this::mapToResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("song.not.found", id));
     }
+
+
 
     private SongResponse mapToResponse(Song song) {
         return new SongResponse(
