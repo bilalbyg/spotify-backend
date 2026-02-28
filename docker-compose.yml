@@ -1,0 +1,89 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: spotify-postgres
+    environment:
+      POSTGRES_USER: spotify_user
+      POSTGRES_PASSWORD: spotify_password
+      POSTGRES_DB: spotify_catalog
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - spotify-network
+
+  mongodb:
+    image: mongo:6.0
+    container_name: spotify-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin_password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - spotify-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: spotify-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - spotify-network
+
+  # Bitnami yerine Sektör Standardı Confluent Kafka (KRaft Mode)
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: spotify-kafka
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: 'spotify-cluster-123456'
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093,EXTERNAL://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - spotify-network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: spotify-kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local-spotify-cluster
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    depends_on:
+      - kafka
+    networks:
+      - spotify-network
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: spotify-zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - spotify-network
+
+networks:
+  spotify-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  kafka_data:

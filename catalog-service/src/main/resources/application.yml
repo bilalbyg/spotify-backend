@@ -1,0 +1,23 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: catalog-service
+
+  # Docker'da aya?a kald?rd???m?z PostgreSQL bilgileri
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spotify_catalog
+    username: spotify_user
+    password: spotify_password
+    driver-class-name: org.postgresql.Driver
+
+  # Hibernate (ORM) Ayarlar?
+  jpa:
+    hibernate:
+      ddl-auto: update # Entity s?n?flar?m?za göre tablolar? otomatik olu?turur/günceller
+    show-sql: true # Konsolda çal??an SQL sorgular?n? görmek için
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
