@@ -3,12 +3,14 @@ package com.spotifyclone.catalog.service;
 
 import com.spotifyclone.catalog.dto.CreateSongRequest;
 import com.spotifyclone.catalog.dto.SongResponse;
+import com.spotifyclone.catalog.exception.ResourceNotFoundException;
 import com.spotifyclone.catalog.model.Song;
 import com.spotifyclone.catalog.repository.SongRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service // Spring'e bunun bir iş katmanı fasulyesi (bean) olduğunu söyler
@@ -53,6 +55,23 @@ public class SongServiceImpl implements SongService {
                 savedSong.getArtist(),
                 savedSong.getAlbumImageUrl(),
                 savedSong.getAudioUrl()
+        );
+    }
+
+    @Override
+    public SongResponse getSongById(UUID id) {
+        return songRepository.findById(id)
+                .map(this::mapToResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("song.not.found", id));
+    }
+
+    private SongResponse mapToResponse(Song song) {
+        return new SongResponse(
+                song.getId(),
+                song.getTitle(),
+                song.getArtist(),
+                song.getAlbumImageUrl(),
+                song.getAudioUrl()
         );
     }
 }

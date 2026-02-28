@@ -15,9 +15,14 @@ spring:
   # Hibernate (ORM) Ayarlar?
   jpa:
     hibernate:
-      ddl-auto: update # Entity s?n?flar?m?za göre tablolar? otomatik olu?turur/günceller
-    show-sql: true # Konsolda çal??an SQL sorgular?n? görmek için
+      ddl-auto: update # Entity s?n?flar?m?za gï¿½re tablolar? otomatik olu?turur/gï¿½nceller
+    show-sql: true # Konsolda ï¿½al??an SQL sorgular?n? gï¿½rmek iï¿½in
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  messages:
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
