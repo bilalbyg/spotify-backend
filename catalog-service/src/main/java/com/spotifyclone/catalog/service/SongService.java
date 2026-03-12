@@ -3,11 +3,13 @@ package com.spotifyclone.catalog.service;
 
 import com.spotifyclone.catalog.dto.CreateSongRequest;
 import com.spotifyclone.catalog.dto.SongResponse;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.UUID;
 
 public interface SongService {
     List<SongResponse> getAllSongs();
-    SongResponse createSong(CreateSongRequest request);
+    SongResponse createSong(String title, String artist, MultipartFile audioFile, MultipartFile imageFile);
     SongResponse getSongById(UUID id);
 }

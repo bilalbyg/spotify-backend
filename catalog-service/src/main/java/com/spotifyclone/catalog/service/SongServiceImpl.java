@@ -10,6 +10,7 @@ import com.spotifyclone.catalog.model.Song;
 import com.spotifyclone.catalog.repository.SongRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class SongServiceImpl implements SongService {
 
     private final SongRepository songRepository;
     private final SongEventProducer songEventProducer;
+    private final FileStorageService fileStorageService;
 
     @Override
     public List<SongResponse> getAllSongs() {
@@ -40,18 +42,26 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public SongResponse createSong(CreateSongRequest request) {
-        // Gelen DTO'yu (Request) veritabanına kaydetmek için Entity'ye çevir
-        Song song = new Song();
-        song.setTitle(request.title());
-        song.setArtist(request.artist());
-        song.setAlbumImageUrl(request.albumImageUrl());
-        song.setAudioUrl(request.audioUrl());
+    public SongResponse createSong(String title, String artist, MultipartFile audioFile, MultipartFile imageFile) {
 
-        // Veritabanına kaydet
+        String audioUrl = fileStorageService.uploadFile(audioFile, "audio");
+        String albumImageUrl = "https://example.com/default-cover.jpg";
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            albumImageUrl = fileStorageService.uploadFile(imageFile, "images");
+        }
+
+        // 2. VERİTABANI İÇİN ENTITY OLUŞTUR (Gelen stringleri ve MinIO linklerini koy)
+        Song song = new Song();
+        song.setTitle(title);
+        song.setArtist(artist);
+        song.setAlbumImageUrl(albumImageUrl); // MinIO Linki
+        song.setAudioUrl(audioUrl);           // MinIO Linki
+
+        // 3. VERİTABANINA KAYDET
         Song savedSong = songRepository.save(song);
 
-        // 2. KAFKA EVENT FIRLATMA (YENİ EKLENDİ)
+        // 4. KAFKA EVENT FIRLATMA
         SongCreatedEvent event = new SongCreatedEvent(
                 savedSong.getId(),
                 savedSong.getTitle(),
@@ -59,7 +69,6 @@ public class SongServiceImpl implements SongService {
         );
         songEventProducer.sendSongCreatedEvent(event);
 
-        // Kaydedilen veriyi tekrar DTO (Response) olarak dışarı dön
         return mapToResponse(savedSong);
     }
 

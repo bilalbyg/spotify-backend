@@ -7,7 +7,9 @@ import com.spotifyclone.catalog.service.SongService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,10 +31,17 @@ public class SongController {
         return songService.getAllSongs();
     }
 
-    @PostMapping
+    // JSON (@RequestBody) yerine Form Data (MultipartFile) alacak şekilde değiştirdik
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public SongResponse createSong(@Valid @RequestBody CreateSongRequest request) {
-        return songService.createSong(request);
+    public SongResponse createSong(
+            @RequestParam("title") String title,
+            @RequestParam("artist") String artist,
+            @RequestParam("audioFile") MultipartFile audioFile,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile
+    ) {
+        // Tüm işi Service katmanına devrediyoruz
+        return songService.createSong(title, artist, audioFile, imageFile);
     }
 
     @GetMapping("/{id}")
