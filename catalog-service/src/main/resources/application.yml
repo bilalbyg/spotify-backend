@@ -27,6 +27,11 @@ spring:
     encoding: UTF-8
     fallback-to-system-locale: false
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
   # KAFKA AYARLARI (İşte burası 'spring:' in hemen altında olmalı)
   kafka:
     bootstrap-servers: localhost:9094
@@ -35,3 +40,9 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: false
+  # MinIO Object Storage Ayarları
+minio:
+  url: http://localhost:9005 # API portumuz (Arayüz olan 9006 değil!)
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: spotify-files
