@@ -20,6 +20,7 @@
 	<modules>
 		<module>catalog-service</module>
 		<module>api-gateway</module>
+		<module>notification-service</module>
 	</modules>
 
 	<properties>
