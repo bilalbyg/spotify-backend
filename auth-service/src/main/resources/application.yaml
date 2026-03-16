@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: auth-service
+  profiles:
+    active: dev
+#    active: docker
 
   datasource:
     url: jdbc:postgresql://localhost:5432/spotify_auth

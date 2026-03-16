@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    # Docker içinde "localhost" çalışmaz, veritabanı konteynerinin adını vermeliyiz
+    url: jdbc:postgresql://spotify-postgres:5432/spotify_auth
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false # Canlıda logları kirletmemek için SQL'i gizliyoruz
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}
+      expiration: ${JWT_EXPIRATION_TIME}
