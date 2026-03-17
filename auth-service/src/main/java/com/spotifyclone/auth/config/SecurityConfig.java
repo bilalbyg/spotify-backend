@@ -42,11 +42,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+
+                // YENİ EKLENEN SATIR: CORS ayarlarını aktif et ve aşağıdaki kuralı kullan
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                         .anyRequest().authenticated()
                 )
-
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
@@ -60,5 +63,28 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+        org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
+
+        // Sadece React'in çalıştığı adrese (Vite varsayılan portu) izin veriyoruz
+        configuration.setAllowedOrigins(java.util.List.of("http://localhost:5173"));
+
+        // Hangi HTTP metodlarına izin verilecek?
+        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // Frontend'den hangi başlıkların (Headers) gelmesine izin verilecek? (Token için Authorization şart)
+        configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type"));
+
+        // Tarayıcının kimlik bilgilerini (cookie vb.) taşımasına izin ver
+        configuration.setAllowCredentials(true);
+
+        // Bu kuralları tüm uç noktalara (/**) uygula
+        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -36,17 +37,25 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    private LocalDate dateOfBirth;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Kullanıcının rolünü Spring Security'nin anlayacağı formata çeviriyoruz
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override
     public String getUsername() {
-        // DİKKAT: Biz sisteme giriş yaparken e-posta kullanıyoruz,
-        // bu yüzden Spring "username" sorduğunda ona email dönmeliyiz!
         return email;
+    }
+
+    public String getActualUsername() {
+        return this.username;
     }
 
     @Override

@@ -23,7 +23,6 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
 
-        // 1. Email veya Username daha önce alınmış mı kontrol et
         if (userRepository.existsByEmail(request.email())) {
             throw new RuntimeException("Bu e-posta adresi zaten kullanımda!");
         }
@@ -31,19 +30,20 @@ public class AuthService {
             throw new RuntimeException("Bu kullanıcı adı zaten alınmış!");
         }
 
-        // 2. Yeni kullanıcıyı oluştur ve şifresini BCrypt ile şifrele
         User user = User.builder()
                 .username(request.username())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .role(Role.USER)
+                .dateOfBirth(request.dateOfBirth())
+                .gender(request.gender())
                 .build();
 
         userRepository.save(user);
 
         String jwtToken = jwtService.generateToken(user.getEmail());
 
-        return new AuthResponse(jwtToken, user.getUsername(), user.getEmail());
+        return new AuthResponse(jwtToken, user.getActualUsername(), user.getEmail());
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -57,6 +57,6 @@ public class AuthService {
 
         String jwtToken = jwtService.generateToken(user.getEmail());
 
-        return new AuthResponse(jwtToken, user.getUsername(), user.getEmail());
+        return new AuthResponse(jwtToken, user.getActualUsername(), user.getEmail());
     }
 }
