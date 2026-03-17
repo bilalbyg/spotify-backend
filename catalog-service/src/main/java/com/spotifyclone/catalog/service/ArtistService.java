@@ -1,0 +1,49 @@
+package com.spotifyclone.catalog.service;
+
+import com.spotifyclone.catalog.dto.CreateArtistRequest;
+import com.spotifyclone.catalog.dto.ArtistResponse;
+import com.spotifyclone.catalog.model.Artist;
+import com.spotifyclone.catalog.repository.ArtistRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ArtistService {
+
+    private final ArtistRepository artistRepository;
+
+    public ArtistResponse createArtist(CreateArtistRequest request) {
+        if (artistRepository.existsByName(request.name())) {
+            throw new RuntimeException("Bu sanatçı zaten mevcut: " + request.name());
+        }
+
+        Artist artist = Artist.builder()
+                .name(request.name())
+                .bio(request.bio())
+                .imageUrl(request.imageUrl())
+                .build();
+
+        artist = artistRepository.save(artist);
+        return mapToResponse(artist);
+    }
+
+    public List<ArtistResponse> getAllArtists() {
+        return artistRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    private ArtistResponse mapToResponse(Artist artist) {
+        return new ArtistResponse(
+                artist.getId(),
+                artist.getName(),
+                artist.getBio(),
+                artist.getImageUrl(),
+                artist.getPopularity()
+        );
+    }
+}
