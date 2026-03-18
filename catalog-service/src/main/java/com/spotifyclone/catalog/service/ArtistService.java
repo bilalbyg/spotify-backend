@@ -14,16 +14,22 @@ import java.util.List;
 public class ArtistService {
 
     private final ArtistRepository artistRepository;
+    private final FileStorageService fileStorageService;
 
     public ArtistResponse createArtist(CreateArtistRequest request) {
         if (artistRepository.existsByName(request.name())) {
             throw new RuntimeException("Bu sanatçı zaten mevcut: " + request.name());
         }
 
+        String uploadedImageUrl = null;
+        if (request.image() != null && !request.image().isEmpty()) {
+            uploadedImageUrl = fileStorageService.uploadFile(request.image(), "images");
+        }
+
         Artist artist = Artist.builder()
                 .name(request.name())
                 .bio(request.bio())
-                .imageUrl(request.imageUrl())
+                .imageUrl(uploadedImageUrl)
                 .build();
 
         artist = artistRepository.save(artist);

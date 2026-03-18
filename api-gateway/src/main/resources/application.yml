@@ -8,8 +8,14 @@ spring:
   cloud:
     gateway:
       routes:
-        # Catalog Service Y�nlendirmesi
+        # Catalog Service Yönlendirmesi
         - id: catalog-service-route
           uri: http://localhost:8081
           predicates:
-            - Path=/api/v1/catalog/** # Gelen istek bu path ile ba?l?yorsa catalog-service'e g�nder
+            - Path=/api/v1/catalog/** # Gelen istek bu path ile başlıyorsa catalog-service'e gönder
+
+        # YENİ EKLENEN: MinIO (Dosya Sunucusu) Yönlendirmesi
+        - id: minio-route
+          uri: http://localhost:9005 # ⚠️ DİKKAT: Buradaki 9005'i MinIO'nun gerçek API portu ile değiştirmelisin!
+          predicates:
+            - Path=/spotify-files/** # Gelen istek spotify-files ile başlıyorsa MinIO'ya gönder

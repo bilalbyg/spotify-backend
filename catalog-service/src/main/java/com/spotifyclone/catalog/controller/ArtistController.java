@@ -5,6 +5,7 @@ import com.spotifyclone.catalog.dto.ArtistResponse;
 import com.spotifyclone.catalog.service.ArtistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +18,8 @@ public class ArtistController {
 
     private final ArtistService artistService;
 
-    @PostMapping
-    public ResponseEntity<ArtistResponse> createArtist(@RequestBody CreateArtistRequest request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ArtistResponse> createArtist(@ModelAttribute CreateArtistRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(artistService.createArtist(request));
     }
 
