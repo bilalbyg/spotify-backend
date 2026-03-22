@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +42,11 @@ public class ArtistService {
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+    }
+
+    public Artist getArtistById(UUID id) {
+        return artistRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sanatçı bulunamadı! ID: " + id));
     }
 
     private ArtistResponse mapToResponse(Artist artist) {
