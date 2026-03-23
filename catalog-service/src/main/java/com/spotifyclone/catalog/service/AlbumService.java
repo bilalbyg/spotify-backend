@@ -53,6 +53,13 @@ public class AlbumService {
                 .toList();
     }
 
+    public List<AlbumResponse> getAllAlbums() {
+        return albumRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     private AlbumResponse mapToResponse(Album album) {
         return new AlbumResponse(
                 album.getId(),

@@ -24,9 +24,13 @@ public class AlbumController {
         return ResponseEntity.status(HttpStatus.CREATED).body(albumService.createAlbum(request));
     }
 
-    // Belirli bir sanatçının albümlerini getirmek için (Frontend'de sanatçı profiline girince çalışacak istek)
     @GetMapping("/artist/{artistId}")
     public ResponseEntity<List<AlbumResponse>> getAlbumsByArtist(@PathVariable UUID artistId) {
         return ResponseEntity.ok(albumService.getAlbumsByArtist(artistId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AlbumResponse>> getAllAlbums() {
+        return ResponseEntity.ok(albumService.getAllAlbums());
     }
 }
