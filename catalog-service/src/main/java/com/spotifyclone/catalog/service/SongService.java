@@ -10,5 +10,6 @@ public interface SongService {
     List<SongResponse> getAllSongs();
     SongResponse createSong(CreateSongRequest request); // DTO kullanarak temizledik
     SongResponse getSongById(UUID id);
-    List<SongResponse> getSongsByAlbum(UUID albumId);   // Albüme göre getirme (Ekstra)
+    List<SongResponse> getSongsByAlbum(UUID albumId);
+    List<SongResponse> getSongsByArtist(UUID artistId); // YENİ
 }

@@ -33,4 +33,9 @@ public class AlbumController {
     public ResponseEntity<List<AlbumResponse>> getAllAlbums() {
         return ResponseEntity.ok(albumService.getAllAlbums());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AlbumResponse> getAlbumById(@PathVariable UUID id) {
+        return ResponseEntity.ok(albumService.getAlbumResponseById(id));
+    }
 }

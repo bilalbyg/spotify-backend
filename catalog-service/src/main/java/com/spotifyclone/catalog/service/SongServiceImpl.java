@@ -62,6 +62,14 @@ public class SongServiceImpl implements SongService {
                 .toList();
     }
 
+    @Override
+    public List<SongResponse> getSongsByArtist(UUID artistId) {
+        return songRepository.findByAlbumArtistId(artistId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     private SongResponse mapToResponse(Song song) {
         return new SongResponse(
                 song.getId(),

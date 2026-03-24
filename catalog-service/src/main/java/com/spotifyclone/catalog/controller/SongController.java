@@ -33,4 +33,14 @@ public class SongController {
     public ResponseEntity<List<SongResponse>> getAllSongs() {
         return ResponseEntity.ok(songService.getAllSongs());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SongResponse> getSongById(@PathVariable UUID id) {
+        return ResponseEntity.ok(songService.getSongById(id));
+    }
+
+    @GetMapping("/artist/{artistId}")
+    public ResponseEntity<List<SongResponse>> getSongsByArtist(@PathVariable UUID artistId) {
+        return ResponseEntity.ok(songService.getSongsByArtist(artistId));
+    }
 }

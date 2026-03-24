@@ -61,8 +61,15 @@ public class AlbumService {
     }
 
     public Album getAlbumById(UUID id) {
-        return albumRepository.findById(id)
+        Album album = albumRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Albüm bulunamadı! ID: " + id));
+        return album;
+    }
+
+    // Frontend'e albüm detaylarını dönmek için (Entity yerine DTO döner)
+    public AlbumResponse getAlbumResponseById(UUID id) {
+        Album album = getAlbumById(id); // Zaten var olan Entity bulucu metodunu kullanıyoruz
+        return mapToResponse(album);    // DTO'ya çevirip yolluyoruz
     }
 
     private AlbumResponse mapToResponse(Album album) {
