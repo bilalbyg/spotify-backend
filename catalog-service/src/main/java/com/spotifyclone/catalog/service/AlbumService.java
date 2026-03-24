@@ -60,6 +60,11 @@ public class AlbumService {
                 .toList();
     }
 
+    public Album getAlbumById(UUID id) {
+        return albumRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Albüm bulunamadı! ID: " + id));
+    }
+
     private AlbumResponse mapToResponse(Album album) {
         return new AlbumResponse(
                 album.getId(),
