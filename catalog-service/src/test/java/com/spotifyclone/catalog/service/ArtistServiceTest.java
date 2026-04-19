@@ -32,13 +32,13 @@ public class ArtistServiceTest {
 
     @BeforeEach
     void setup() {
-        request = new CreateArtistRequest("Nova Echoes", "Electronic vibes", "\"http://image.url\"");
+        request = new CreateArtistRequest("Nova Echoes", "Electronic vibes", null);
 
         savedArtist = Artist.builder()
                 .id(UUID.randomUUID())
                 .name(request.name())
                 .bio(request.bio())
-                .imageUrl(request.imageUrl())
+                .imageUrl("http://image.url")
                 .popularity(0)
                 .build();
     }
