@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: notification-service
+  data:
+    mongodb:
+      uri: mongodb://admin:admin_password@localhost:27017/spotify_activity?authSource=admin
   kafka:
     bootstrap-servers: localhost:9094
     consumer:

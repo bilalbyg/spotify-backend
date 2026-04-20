@@ -44,6 +44,11 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Gender gender;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private SubscriptionType subscriptionType = SubscriptionType.FREE;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
