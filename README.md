@@ -19,6 +19,14 @@ Bilal Beygo - bbeygo.71@gmail.com
 
 Frontend Project Link: [https://github.com/bilalbyg/Spotify-Clone-Frontend](https://github.com/bilalbyg/Spotify-Clone-Frontend)
 
+## Architecture and Entities (new_be branch)
+
+This branch introduces an expanded set of entities to better reflect a complete Spotify clone. The changes include adding relationships for playlists, podcasts, user libraries (liked songs, saved albums), and user following functionalities.
+
+For a comprehensive list of all entities and their descriptions, please see [entities.md](entities.md).
+
+For a visual representation of the Entity-Relationship structure, refer to the [ER Diagram](er-diagram.svg).
+
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555

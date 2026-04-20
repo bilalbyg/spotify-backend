@@ -1,0 +1,113 @@
+erDiagram
+    %% Auth Service Entities
+    USER {
+        UUID id PK
+        String email
+        String username
+        String password
+        String role
+        LocalDate dateOfBirth
+        String gender
+    }
+    USER_FOLLOWS_USER {
+        UUID id PK
+        UUID follower_id FK
+        UUID followed_id FK
+        LocalDateTime followedAt
+    }
+
+    %% Catalog Service Entities
+    ARTIST {
+        UUID id PK
+        String name
+        String bio
+        String imageUrl
+        Integer popularity
+    }
+    ALBUM {
+        UUID id PK
+        String title
+        Integer releaseYear
+        String coverImageUrl
+        UUID artist_id FK
+    }
+    SONG {
+        UUID id PK
+        String title
+        Integer duration
+        String audioUrl
+        UUID album_id FK
+    }
+    GENRE {
+        UUID id PK
+        String name
+        String iconUrl
+    }
+    PLAYLIST {
+        UUID id PK
+        String name
+        String description
+        String coverImageUrl
+        Boolean isPublic
+        UUID ownerId FK "References USER.id"
+    }
+    PODCAST {
+        UUID id PK
+        String title
+        String description
+        String publisher
+        String coverImageUrl
+    }
+    EPISODE {
+        UUID id PK
+        String title
+        String description
+        Integer duration
+        String audioUrl
+        LocalDate releaseDate
+        UUID podcast_id FK
+    }
+    LYRICS {
+        UUID id PK
+        String text
+        UUID song_id FK
+    }
+    LIKED_SONG {
+        UUID id PK
+        UUID userId FK "References USER.id"
+        UUID song_id FK
+        LocalDateTime likedAt
+    }
+    SAVED_ALBUM {
+        UUID id PK
+        UUID userId FK "References USER.id"
+        UUID album_id FK
+        LocalDateTime savedAt
+    }
+    SAVED_PLAYLIST {
+        UUID id PK
+        UUID userId FK "References USER.id"
+        UUID playlist_id FK
+        LocalDateTime savedAt
+    }
+    USER_FOLLOWS_ARTIST {
+        UUID id PK
+        UUID userId FK "References USER.id"
+        UUID artist_id FK
+        LocalDateTime followedAt
+    }
+
+    %% Relationships
+    USER ||--o{ USER_FOLLOWS_USER : "follower"
+    USER ||--o{ USER_FOLLOWS_USER : "followed"
+    ARTIST ||--o{ ALBUM : "creates"
+    ALBUM ||--o{ SONG : "contains"
+    SONG ||--o{ GENRE : "has_genre (ManyToMany)"
+    SONG ||--o{ ARTIST : "collaboratingArtists (ManyToMany)"
+    PLAYLIST ||--o{ SONG : "contains (ManyToMany)"
+    PODCAST ||--o{ EPISODE : "contains"
+    SONG ||--|| LYRICS : "has"
+    SONG ||--o{ LIKED_SONG : "is_liked"
+    ALBUM ||--o{ SAVED_ALBUM : "is_saved"
+    PLAYLIST ||--o{ SAVED_PLAYLIST : "is_saved"
+    ARTIST ||--o{ USER_FOLLOWS_ARTIST : "is_followed"
