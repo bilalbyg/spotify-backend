@@ -29,4 +29,20 @@ public class Song {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id", nullable = false)
     private Album album;
+
+    @ManyToMany
+    @JoinTable(
+            name = "song_genres",
+            joinColumns = @JoinColumn(name = "song_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private java.util.Set<Genre> genres;
+
+    @ManyToMany
+    @JoinTable(
+            name = "song_collaborators",
+            joinColumns = @JoinColumn(name = "song_id"),
+            inverseJoinColumns = @JoinColumn(name = "artist_id")
+    )
+    private java.util.Set<Artist> collaboratingArtists;
 }
