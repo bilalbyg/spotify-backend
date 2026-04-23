@@ -41,7 +41,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        String jwtToken = jwtService.generateToken(user.getEmail());
+        String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole().name());
 
         return new AuthResponse(jwtToken, user.getActualUsername(), user.getEmail());
     }
@@ -55,7 +55,7 @@ public class AuthService {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı!"));
 
-        String jwtToken = jwtService.generateToken(user.getEmail());
+        String jwtToken = jwtService.generateToken(user.getEmail(), user.getRole().name());
 
         return new AuthResponse(jwtToken, user.getActualUsername(), user.getEmail());
     }

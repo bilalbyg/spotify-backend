@@ -6,6 +6,7 @@ import com.spotifyclone.catalog.service.LyricsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class LyricsController {
 
     private final LyricsService lyricsService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<LyricsResponse> createOrUpdateLyrics(@RequestBody CreateLyricsRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(lyricsService.createOrUpdateLyrics(request));
@@ -32,6 +34,7 @@ public class LyricsController {
         return ResponseEntity.ok(lyricsService.getLyricsBySongId(songId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLyrics(@PathVariable UUID id) {
         lyricsService.deleteLyrics(id);

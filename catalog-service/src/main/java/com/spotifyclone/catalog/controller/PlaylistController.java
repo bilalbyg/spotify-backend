@@ -6,6 +6,7 @@ import com.spotifyclone.catalog.service.PlaylistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class PlaylistController {
         return ResponseEntity.ok(playlistService.getAllPlaylists());
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PostMapping
     public ResponseEntity<PlaylistResponse> createPlaylist(@RequestBody CreatePlaylistRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(playlistService.createPlaylist(request));
@@ -33,22 +35,26 @@ public class PlaylistController {
         return ResponseEntity.ok(playlistService.getPlaylistById(id));
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PlaylistResponse> updatePlaylist(@PathVariable UUID id, @RequestBody CreatePlaylistRequest request) {
         return ResponseEntity.ok(playlistService.updatePlaylist(id, request));
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePlaylist(@PathVariable UUID id) {
         playlistService.deletePlaylist(id);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PostMapping("/{playlistId}/songs/{songId}")
     public ResponseEntity<PlaylistResponse> addSongToPlaylist(@PathVariable UUID playlistId, @PathVariable UUID songId) {
         return ResponseEntity.ok(playlistService.addSongToPlaylist(playlistId, songId));
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/{playlistId}/songs/{songId}")
     public ResponseEntity<PlaylistResponse> removeSongFromPlaylist(@PathVariable UUID playlistId, @PathVariable UUID songId) {
         return ResponseEntity.ok(playlistService.removeSongFromPlaylist(playlistId, songId));

@@ -6,6 +6,7 @@ import com.spotifyclone.catalog.service.PodcastService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class PodcastController {
         return ResponseEntity.ok(podcastService.getAllPodcasts());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PodcastResponse> createPodcast(@RequestBody CreatePodcastRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(podcastService.createPodcast(request));
@@ -33,11 +35,13 @@ public class PodcastController {
         return ResponseEntity.ok(podcastService.getPodcastById(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PodcastResponse> updatePodcast(@PathVariable UUID id, @RequestBody CreatePodcastRequest request) {
         return ResponseEntity.ok(podcastService.updatePodcast(id, request));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePodcast(@PathVariable UUID id) {
         podcastService.deletePodcast(id);
