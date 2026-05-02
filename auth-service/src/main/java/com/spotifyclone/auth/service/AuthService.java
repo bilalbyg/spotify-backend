@@ -41,7 +41,8 @@ public class AuthService {
 
         userRepository.save(user);
 
-        String jwtToken = jwtService.generateToken(user.getEmail());
+        // JWT üretimini kullanıcı nesnesi üzerinden yaparak rol bilgisini de token'a ekliyoruz.
+        String jwtToken = jwtService.generateToken(user);
 
         return new AuthResponse(jwtToken, user.getActualUsername(), user.getEmail());
     }
@@ -55,7 +56,8 @@ public class AuthService {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı!"));
 
-        String jwtToken = jwtService.generateToken(user.getEmail());
+        // JWT üretimini kullanıcı nesnesi üzerinden yaparak rol bilgisini de token'a ekliyoruz.
+        String jwtToken = jwtService.generateToken(user);
 
         return new AuthResponse(jwtToken, user.getActualUsername(), user.getEmail());
     }

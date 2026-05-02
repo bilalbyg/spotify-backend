@@ -4,6 +4,7 @@ import com.spotifyclone.catalog.dto.AlbumResponse;
 import com.spotifyclone.catalog.dto.CreateAlbumRequest;
 import com.spotifyclone.catalog.service.AlbumService;
 import lombok.RequiredArgsConstructor;
+import com.spotifyclone.catalog.security.annotation.AdminOnly;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ public class AlbumController {
 
     private final AlbumService albumService;
 
+    // Albüm oluşturma işlemini sadece ADMIN rolüne açıyoruz.
+    @AdminOnly
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AlbumResponse> createAlbum(@ModelAttribute CreateAlbumRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(albumService.createAlbum(request));

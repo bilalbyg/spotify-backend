@@ -4,6 +4,7 @@ import com.spotifyclone.catalog.dto.CreatePlaylistRequest;
 import com.spotifyclone.catalog.dto.PlaylistResponse;
 import com.spotifyclone.catalog.service.PlaylistService;
 import lombok.RequiredArgsConstructor;
+import com.spotifyclone.catalog.security.annotation.AdminOnly;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,8 @@ public class PlaylistController {
         return ResponseEntity.ok(playlistService.getAllPlaylists());
     }
 
+    // Playlist oluşturma işlemini sadece ADMIN rolüne açıyoruz.
+    @AdminOnly
     @PostMapping
     public ResponseEntity<PlaylistResponse> createPlaylist(@RequestBody CreatePlaylistRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(playlistService.createPlaylist(request));
@@ -33,22 +36,30 @@ public class PlaylistController {
         return ResponseEntity.ok(playlistService.getPlaylistById(id));
     }
 
+    // Playlist güncelleme işlemini sadece ADMIN rolüne açıyoruz.
+    @AdminOnly
     @PutMapping("/{id}")
     public ResponseEntity<PlaylistResponse> updatePlaylist(@PathVariable UUID id, @RequestBody CreatePlaylistRequest request) {
         return ResponseEntity.ok(playlistService.updatePlaylist(id, request));
     }
 
+    // Playlist silme işlemini sadece ADMIN rolüne açıyoruz.
+    @AdminOnly
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePlaylist(@PathVariable UUID id) {
         playlistService.deletePlaylist(id);
         return ResponseEntity.noContent().build();
     }
 
+    // Playlist'e şarkı ekleme işlemini sadece ADMIN rolüne açıyoruz.
+    @AdminOnly
     @PostMapping("/{playlistId}/songs/{songId}")
     public ResponseEntity<PlaylistResponse> addSongToPlaylist(@PathVariable UUID playlistId, @PathVariable UUID songId) {
         return ResponseEntity.ok(playlistService.addSongToPlaylist(playlistId, songId));
     }
 
+    // Playlist'ten şarkı çıkarma işlemini sadece ADMIN rolüne açıyoruz.
+    @AdminOnly
     @DeleteMapping("/{playlistId}/songs/{songId}")
     public ResponseEntity<PlaylistResponse> removeSongFromPlaylist(@PathVariable UUID playlistId, @PathVariable UUID songId) {
         return ResponseEntity.ok(playlistService.removeSongFromPlaylist(playlistId, songId));

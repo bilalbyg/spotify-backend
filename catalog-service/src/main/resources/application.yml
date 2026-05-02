@@ -46,3 +46,9 @@ minio:
   access-key: minioadmin
   secret-key: minioadmin
   bucket-name: spotify-files
+
+application:
+  security:
+    jwt:
+      # Token doğrulaması için secret key değeri sadece ortam değişkeninden okunur.
+      secret-key: ${JWT_SECRET_KEY}

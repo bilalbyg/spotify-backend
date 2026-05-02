@@ -25,6 +25,8 @@ services:
       - mongodb_data:/data/db
     networks:
       - spotify-network
+    profiles:
+      - manual
 
   redis:
     image: redis:7-alpine
@@ -33,6 +35,8 @@ services:
       - "6379:6379"
     networks:
       - spotify-network
+    profiles:
+      - manual
 
   # Bitnami yerine Sektör Standardı Confluent Kafka (KRaft Mode)
   kafka:
@@ -57,6 +61,8 @@ services:
       - kafka_data:/var/lib/kafka/data
     networks:
       - spotify-network
+    profiles:
+      - manual
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -70,6 +76,8 @@ services:
       - kafka
     networks:
       - spotify-network
+    profiles:
+      - manual
 
   zipkin:
     image: openzipkin/zipkin:latest
@@ -78,6 +86,8 @@ services:
       - "9411:9411"
     networks:
       - spotify-network
+    profiles: 
+      - manual
 
   minio:
     image: minio/minio:RELEASE.2024-01-28T22-35-53Z # Kararlı bir sürüm seçtik
@@ -93,6 +103,8 @@ services:
       - minio_data:/data
     networks:
       - spotify-network
+    profiles:
+      - manual
 
 networks:
   spotify-network:
