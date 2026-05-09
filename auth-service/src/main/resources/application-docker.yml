@@ -11,6 +11,16 @@ spring:
     show-sql: false # Canlıda logları kirletmemek için SQL'i gizliyoruz
 
 application:
+  # Tek seferlik admin bootstrap ayarlari bu bloktan okunur.
+  bootstrap:
+    # Admin e-posta degeri env'den okunur.
+    admin:
+      # Default admin email bilgisi env/property'den gelir.
+      email: ${ADMIN_EMAIL:}
+      # Default admin username bilgisi env/property'den gelir.
+      username: ${ADMIN_USERNAME:}
+      # Default admin sifresi base64 formatta env/property'den gelir.
+      password-b64: ${ADMIN_PASSWORD_B64:}
   security:
     jwt:
       secret-key: ${JWT_SECRET_KEY}
