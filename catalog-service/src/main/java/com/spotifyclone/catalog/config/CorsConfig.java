@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**") // Sadece /api/ ile başlayan isteklere bu kuralı uygula
-                        .allowedOrigins("http://localhost:5173") // Vite (React) projemizin çalıştığı adres
+                        .allowedOriginPatterns("*") // Geliştirme ortamında React, Bruno vb. istemcilere izin ver
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // İzin verilen HTTP metotları
                         .allowedHeaders("*") // Tüm başlıklara izin ver
                         .allowCredentials(true); // Kimlik doğrulama (cookie vb.) bilgilerine izin ver
