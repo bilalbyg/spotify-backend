@@ -12,4 +12,5 @@ public interface SongService {
     SongResponse getSongById(UUID id);
     List<SongResponse> getSongsByAlbum(UUID albumId);
     List<SongResponse> getSongsByArtist(UUID artistId); // YENİ
+    List<SongResponse> searchSongs(String title);
 }

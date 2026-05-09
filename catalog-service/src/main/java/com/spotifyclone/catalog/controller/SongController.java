@@ -46,4 +46,9 @@ public class SongController {
     public ResponseEntity<List<SongResponse>> getSongsByArtist(@PathVariable UUID artistId) {
         return ResponseEntity.ok(songService.getSongsByArtist(artistId));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<SongResponse>> searchSongs(@RequestParam(required = false) String title) {
+        return ResponseEntity.ok(songService.searchSongs(title));
+    }
 }

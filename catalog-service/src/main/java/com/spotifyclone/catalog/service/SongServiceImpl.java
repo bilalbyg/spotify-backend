@@ -5,7 +5,9 @@ import com.spotifyclone.catalog.dto.SongResponse;
 import com.spotifyclone.catalog.model.Album;
 import com.spotifyclone.catalog.model.Song;
 import com.spotifyclone.catalog.repository.SongRepository;
+import com.spotifyclone.catalog.specification.SongSpecifications;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,6 +70,13 @@ public class SongServiceImpl implements SongService {
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+    }
+
+    @Override
+    public List<SongResponse> searchSongs(String title) {
+        return songRepository.findAll(
+                Specification.where(SongSpecifications.titleContains(title)))
+                .stream().map(this::mapToResponse).toList();
     }
 
     private SongResponse mapToResponse(Song song) {
