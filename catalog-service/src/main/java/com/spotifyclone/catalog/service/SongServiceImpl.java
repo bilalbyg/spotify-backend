@@ -1,13 +1,15 @@
 package com.spotifyclone.catalog.service;
 
 import com.spotifyclone.catalog.dto.CreateSongRequest;
+// Controller'dan gelen tüm arama filtrelerini taşıyan kriter DTO'su.
+import com.spotifyclone.catalog.dto.SongSearchCriteria;
 import com.spotifyclone.catalog.dto.SongResponse;
 import com.spotifyclone.catalog.model.Album;
 import com.spotifyclone.catalog.model.Song;
 import com.spotifyclone.catalog.repository.SongRepository;
-import com.spotifyclone.catalog.specification.SongSpecifications;
+// Kriter DTO'sunu JPA Specification zincirine çeviren builder.
+import com.spotifyclone.catalog.specification.SongSearchSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -73,9 +75,13 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public List<SongResponse> searchSongs(String title) {
+    // Kriter bazlı dinamik filtreleme: sadece dolu parametreler WHERE koşuluna dönüşür.
+    public List<SongResponse> searchSongs(SongSearchCriteria criteria) {
+        // Builder'dan gelen tek specification ile repository katmanında arama yapıyoruz.
         return songRepository.findAll(
-                Specification.where(SongSpecifications.titleContains(title)))
+                // Kriterleri birleştirip çalıştırılabilir sorgu predicatelerine dönüştürür.
+                SongSearchSpecificationBuilder.build(criteria))
+                // Domain entity'yi API response DTO'suna mapliyoruz.
                 .stream().map(this::mapToResponse).toList();
     }
 

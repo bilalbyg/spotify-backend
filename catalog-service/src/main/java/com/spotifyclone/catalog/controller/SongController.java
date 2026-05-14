@@ -1,6 +1,8 @@
 package com.spotifyclone.catalog.controller;
 
 import com.spotifyclone.catalog.dto.CreateSongRequest;
+// Arama endpoint'inde gelen query parametrelerini tek obje olarak taşımak için kriter DTO'su.
+import com.spotifyclone.catalog.dto.SongSearchCriteria;
 import com.spotifyclone.catalog.dto.SongResponse;
 import com.spotifyclone.catalog.service.SongService;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +50,43 @@ public class SongController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<SongResponse>> searchSongs(@RequestParam(required = false) String title) {
-        return ResponseEntity.ok(songService.searchSongs(title));
+    // Gelişmiş şarkı araması: tüm filtreler opsiyoneldir, dolu olanlar sorguya dahil edilir.
+    public ResponseEntity<List<SongResponse>> searchSongs(@RequestParam(required = false) String title,
+                                                          // Sanatçı adına göre contains araması yapar.
+                                                          @RequestParam(required = false) String artistName,
+                                                          // Virgülle ayrılmış genre UUID listesi (örn: ?genreIds=id1,id2).
+                                                          @RequestParam(required = false) List<UUID> genreIds,
+                                                          // Şarkı süresi alt sınırı (saniye).
+                                                          @RequestParam(required = false) Integer minDuration,
+                                                          // Şarkı süresi üst sınırı (saniye).
+                                                          @RequestParam(required = false) Integer maxDuration,
+                                                          // Albüm çıkış yılı alt sınırı.
+                                                          @RequestParam(required = false) Integer releaseYearFrom,
+                                                          // Albüm çıkış yılı üst sınırı.
+                                                          @RequestParam(required = false) Integer releaseYearTo,
+                                                          // Bu playlist'te olan şarkıları sonuçtan hariç tutar.
+                                                          @RequestParam(required = false) UUID excludePlaylistId) {
+        // Controller parametrelerini service'in beklediği tek arama kriteri objesine dönüştürüyoruz.
+        SongSearchCriteria criteria = new SongSearchCriteria(
+                // Başlık filtresi.
+                title,
+                // Sanatçı filtresi.
+                artistName,
+                // Tür (genre) filtreleri.
+                genreIds,
+                // Minimum süre.
+                minDuration,
+                // Maksimum süre.
+                maxDuration,
+                // Başlangıç yılı.
+                releaseYearFrom,
+                // Bitiş yılı.
+                releaseYearTo,
+                // Hariç tutulacak playlist.
+                excludePlaylistId
+        );
+
+        // Kriter nesnesini service katmanına iletip filtrelenmiş sonucu döndürüyoruz.
+        return ResponseEntity.ok(songService.searchSongs(criteria));
     }
 }

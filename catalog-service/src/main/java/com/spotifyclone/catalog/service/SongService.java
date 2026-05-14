@@ -1,6 +1,8 @@
 package com.spotifyclone.catalog.service;
 
 import com.spotifyclone.catalog.dto.CreateSongRequest;
+// Dinamik arama filtrelerinin tek parametre üzerinden taşınması için kriter DTO'su.
+import com.spotifyclone.catalog.dto.SongSearchCriteria;
 import com.spotifyclone.catalog.dto.SongResponse;
 
 import java.util.List;
@@ -12,5 +14,6 @@ public interface SongService {
     SongResponse getSongById(UUID id);
     List<SongResponse> getSongsByAlbum(UUID albumId);
     List<SongResponse> getSongsByArtist(UUID artistId); // YENİ
-    List<SongResponse> searchSongs(String title);
+    // Gelişmiş şarkı aramasını kriter objesi ile çalıştırır.
+    List<SongResponse> searchSongs(SongSearchCriteria criteria);
 }
