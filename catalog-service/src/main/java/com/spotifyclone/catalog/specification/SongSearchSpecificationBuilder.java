@@ -15,7 +15,7 @@ public final class SongSearchSpecificationBuilder {
     public static Specification<Song> build(SongSearchCriteria criteria) {
         // Kriter yoksa filtre uygulamadan tüm kayıtları döndüren null-spec yaklaşımı.
         if (criteria == null) {
-            return Specification.where(null);
+            return Specification.where((Specification<Song>) null);
         }
 
         // Aralıklar ters verildiyse (örn min>max), veritabanına hatalı sorgu göndermeden boş sonuç dön.
