@@ -5,18 +5,21 @@ import com.spotifyclone.catalog.dto.CreateAlbumRequest;
 import com.spotifyclone.catalog.model.Album;
 import com.spotifyclone.catalog.model.Artist;
 import com.spotifyclone.catalog.repository.AlbumRepository;
+import com.spotifyclone.catalog.specification.AlbumSpecifications;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AlbumService {
 
     private final AlbumRepository albumRepository;
-    private final ArtistService artistService; // REPO GİTTİ, SERVİS GELDİ!
+    private final ArtistService artistService;
     private final FileStorageService fileStorageService;
 
     public AlbumResponse createAlbum(CreateAlbumRequest request) {
@@ -50,14 +53,65 @@ public class AlbumService {
         return albumRepository.findByArtistId(artistId)
                 .stream()
                 .map(this::mapToResponse)
-                .toList();
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public List<AlbumResponse> getAllAlbums() {
         return albumRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
-                .toList();
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<AlbumResponse> searchAlbumsByTitle(String title) {
+        return searchAlbums(title, null, null, null);
+    }
+
+    public List<AlbumResponse> searchAlbumsByArtistName(String artistName) {
+        return searchAlbums(null, artistName, null, null);
+    }
+
+    public List<AlbumResponse> searchAlbumsByReleaseYearRange(Integer releaseYearFrom, Integer releaseYearTo) {
+        return searchAlbums(null, null, releaseYearFrom, releaseYearTo);
+    }
+
+    public List<AlbumResponse> searchAlbumsByReleaseYearFrom(Integer releaseYearFrom) {
+        return searchAlbums(null, null, releaseYearFrom, null);
+    }
+
+    public List<AlbumResponse> searchAlbumsByReleaseYearTo(Integer releaseYearTo) {
+        return searchAlbums(null, null, null, releaseYearTo);
+    }
+
+    public List<AlbumResponse> searchAlbumsByTitleAndArtistName(String title, String artistName) {
+        return searchAlbums(title, artistName, null, null);
+    }
+
+    public List<AlbumResponse> searchAlbumsByTitleAndReleaseYearRange(String title,
+                                                                      Integer releaseYearFrom,
+                                                                      Integer releaseYearTo) {
+        return searchAlbums(title, null, releaseYearFrom, releaseYearTo);
+    }
+
+    public List<AlbumResponse> searchAlbumsByArtistNameAndReleaseYearRange(String artistName,
+                                                                           Integer releaseYearFrom,
+                                                                           Integer releaseYearTo) {
+        return searchAlbums(null, artistName, releaseYearFrom, releaseYearTo);
+    }
+
+    public List<AlbumResponse> searchAlbums(String title,
+                                            String artistName,
+                                            Integer releaseYearFrom,
+                                            Integer releaseYearTo) {
+        Specification<Album> spec = Specification.where(AlbumSpecifications.titleContains(title))
+                .and(AlbumSpecifications.artistNameContains(artistName))
+                .and(AlbumSpecifications.releaseYearGreaterThanOrEqual(releaseYearFrom))
+                .and(AlbumSpecifications.releaseYearLessThanOrEqual(releaseYearTo));
+
+        return albumRepository.findAll(spec)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public Album getAlbumById(UUID id) {

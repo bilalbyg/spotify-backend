@@ -37,6 +37,76 @@ public class AlbumController {
         return ResponseEntity.ok(albumService.getAllAlbums());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<AlbumResponse>> searchAlbums(@RequestParam(required = false) String title,
+                                                            @RequestParam(required = false) String artistName,
+                                                            @RequestParam(required = false) Integer releaseYearFrom,
+                                                            @RequestParam(required = false) Integer releaseYearTo) {
+        return ResponseEntity.ok(albumService.searchAlbums(
+                title,
+                artistName,
+                releaseYearFrom,
+                releaseYearTo
+        ));
+    }
+
+    @GetMapping("/search/title")
+    public ResponseEntity<List<AlbumResponse>> searchAlbumsByTitle(@RequestParam String title) {
+        return ResponseEntity.ok(albumService.searchAlbumsByTitle(title));
+    }
+
+    @GetMapping("/search/artist")
+    public ResponseEntity<List<AlbumResponse>> searchAlbumsByArtistName(@RequestParam String artistName) {
+        return ResponseEntity.ok(albumService.searchAlbumsByArtistName(artistName));
+    }
+
+    @GetMapping("/search/release-year-from")
+    public ResponseEntity<List<AlbumResponse>> searchAlbumsByReleaseYearFrom(@RequestParam Integer releaseYearFrom) {
+        return ResponseEntity.ok(albumService.searchAlbumsByReleaseYearFrom(releaseYearFrom));
+    }
+
+    @GetMapping("/search/release-year-to")
+    public ResponseEntity<List<AlbumResponse>> searchAlbumsByReleaseYearTo(@RequestParam Integer releaseYearTo) {
+        return ResponseEntity.ok(albumService.searchAlbumsByReleaseYearTo(releaseYearTo));
+    }
+
+    @GetMapping("/search/release-year-range")
+    public ResponseEntity<List<AlbumResponse>> searchAlbumsByReleaseYearRange(@RequestParam Integer releaseYearFrom,
+                                                                              @RequestParam Integer releaseYearTo) {
+        return ResponseEntity.ok(albumService.searchAlbumsByReleaseYearRange(
+                releaseYearFrom,
+                releaseYearTo
+        ));
+    }
+
+    @GetMapping("/search/title-artist")
+    public ResponseEntity<List<AlbumResponse>> searchAlbumsByTitleAndArtistName(@RequestParam String title,
+                                                                                @RequestParam String artistName) {
+        return ResponseEntity.ok(albumService.searchAlbumsByTitleAndArtistName(title, artistName));
+    }
+
+    @GetMapping("/search/title-release-year")
+    public ResponseEntity<List<AlbumResponse>> searchAlbumsByTitleAndReleaseYearRange(@RequestParam String title,
+                                                                                      @RequestParam Integer releaseYearFrom,
+                                                                                      @RequestParam Integer releaseYearTo) {
+        return ResponseEntity.ok(albumService.searchAlbumsByTitleAndReleaseYearRange(
+                title,
+                releaseYearFrom,
+                releaseYearTo
+        ));
+    }
+
+    @GetMapping("/search/artist-release-year")
+    public ResponseEntity<List<AlbumResponse>> searchAlbumsByArtistNameAndReleaseYearRange(@RequestParam String artistName,
+                                                                                            @RequestParam Integer releaseYearFrom,
+                                                                                            @RequestParam Integer releaseYearTo) {
+        return ResponseEntity.ok(albumService.searchAlbumsByArtistNameAndReleaseYearRange(
+                artistName,
+                releaseYearFrom,
+                releaseYearTo
+        ));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<AlbumResponse> getAlbumById(@PathVariable UUID id) {
         return ResponseEntity.ok(albumService.getAlbumResponseById(id));
