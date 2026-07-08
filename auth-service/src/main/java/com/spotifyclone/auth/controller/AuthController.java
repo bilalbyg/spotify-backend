@@ -2,6 +2,7 @@ package com.spotifyclone.auth.controller;
 
 import com.spotifyclone.auth.dto.AuthResponse;
 import com.spotifyclone.auth.dto.LoginRequest;
+import com.spotifyclone.auth.dto.RefreshTokenRequest;
 import com.spotifyclone.auth.dto.RegisterRequest;
 import com.spotifyclone.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthResponse> register(@RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok().body(authService.refreshToken(request));
     }
 }

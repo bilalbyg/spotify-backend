@@ -2,6 +2,8 @@ package com.spotifyclone.auth.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-// NOTE : "user" is a reserved key for PGSQL. We have to do "users".
 @Table(name = "users")
 @Getter
 @Setter
@@ -22,6 +23,8 @@ import java.util.UUID;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(name = "id", length = 36, nullable = false, updatable = false)
     private UUID id;
 
     @Column(nullable = false, unique = true)

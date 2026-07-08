@@ -3,13 +3,28 @@ services:
     image: postgres:15-alpine
     container_name: spotify-postgres
     environment:
-      POSTGRES_USER: spotify_user
-      POSTGRES_PASSWORD: spotify_password
-      POSTGRES_DB: spotify_catalog
+      POSTGRES_USER: CHANGE_ME_POSTGRES_USER
+      POSTGRES_PASSWORD: CHANGE_ME_POSTGRES_PASSWORD
+      POSTGRES_DB: CHANGE_ME_POSTGRES_DB
     ports:
-      - "5432:5432"
+      - "54321:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - spotify-network
+
+  auth-mysql:
+    image: mysql:8.0
+    container_name: spotify-auth-mysql
+    environment:
+      MYSQL_DATABASE: CHANGE_ME_MYSQL_DATABASE
+      MYSQL_USER: CHANGE_ME_MYSQL_USER
+      MYSQL_PASSWORD: CHANGE_ME_MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD: CHANGE_ME_MYSQL_ROOT_PASSWORD
+    ports:
+      - "3307:3306"
+    volumes:
+      - auth_mysql_data:/var/lib/mysql
     networks:
       - spotify-network
 
@@ -17,8 +32,8 @@ services:
     image: mongo:6.0
     container_name: spotify-mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin_password
+      MONGO_INITDB_ROOT_USERNAME: CHANGE_ME_MONGO_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: CHANGE_ME_MONGO_ROOT_PASSWORD
     ports:
       - "27017:27017"
     volumes:
@@ -38,7 +53,6 @@ services:
     profiles:
       - manual
 
-  # Bitnami yerine Sektör Standardı Confluent Kafka (KRaft Mode)
   kafka:
     image: confluentinc/cp-kafka:7.6.0
     container_name: spotify-kafka
@@ -46,7 +60,7 @@ services:
       - "9094:9094"
     environment:
       KAFKA_NODE_ID: 1
-      CLUSTER_ID: 'spotify-cluster-123456'
+      CLUSTER_ID: CHANGE_ME_KAFKA_CLUSTER_ID
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_LISTENERS: PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093,EXTERNAL://0.0.0.0:9094
@@ -70,7 +84,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - KAFKA_CLUSTERS_0_NAME=local-spotify-cluster
+      - KAFKA_CLUSTERS_0_NAME=CHANGE_ME_CLUSTER_NAME
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
     depends_on:
       - kafka
@@ -86,18 +100,18 @@ services:
       - "9411:9411"
     networks:
       - spotify-network
-    profiles: 
+    profiles:
       - manual
 
   minio:
-    image: minio/minio:RELEASE.2024-01-28T22-35-53Z # Kararlı bir sürüm seçtik
+    image: minio/minio:RELEASE.2024-01-28T22-35-53Z
     container_name: spotify-minio
     ports:
-      - "9005:9000" # MinIO API Portu (Dikkat: Catalog servisimiz de 9000'deydi, çakışmasın!)
-      - "9006:9001" # MinIO Web Arayüzü Portu (Notification servisimiz 9001'deydi!)
+      - "9005:9000"
+      - "9006:9001"
     environment:
-      MINIO_ROOT_USER: minioadmin      # S3 Access Key
-      MINIO_ROOT_PASSWORD: minioadmin  # S3 Secret Key
+      MINIO_ROOT_USER: CHANGE_ME_MINIO_ROOT_USER
+      MINIO_ROOT_PASSWORD: CHANGE_ME_MINIO_ROOT_PASSWORD
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
@@ -112,6 +126,7 @@ networks:
 
 volumes:
   postgres_data:
+  auth_mysql_data:
   mongodb_data:
   kafka_data:
   minio_data:
