@@ -1,10 +1,12 @@
 spring:
+  config:
+    import: optional:file:.env[.properties],optional:file:../.env[.properties]
   datasource:
     # Docker içinde "localhost" çalışmaz, veritabanı konteynerinin adını vermeliyiz
-    url: jdbc:postgresql://spotify-postgres:5432/spotify_auth
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://auth-mysql:3306/spotify_auth?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME:spotify_user}
+    password: ${DB_PASSWORD:spotify_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update

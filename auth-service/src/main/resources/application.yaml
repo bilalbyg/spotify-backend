@@ -2,6 +2,8 @@ server:
   port: 8082
 
 spring:
+  config:
+    import: optional:file:.env[.properties],optional:file:../.env[.properties]
   application:
     name: auth-service
   profiles:
@@ -9,12 +11,23 @@ spring:
 #    active: docker
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/spotify_auth
+    url: jdbc:mysql://localhost:3307/spotify_auth?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: spotify_user
     password: spotify_password
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+application:
+  bootstrap:
+    admin:
+      email: ${ADMIN_EMAIL:}
+      username: ${ADMIN_USERNAME:}
+      password-b64: ${ADMIN_PASSWORD_B64:}
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}
+      expiration: ${JWT_EXPIRATION_TIME}
