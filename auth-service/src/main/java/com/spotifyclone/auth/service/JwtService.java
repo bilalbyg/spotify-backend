@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -87,5 +88,9 @@ public class JwtService {
     public boolean isTokenValid(String token, User user) {
         String username = extractUserName(token);
         return username.equals(user.getEmail()) && !isTokenExpired(token);
+    }
+
+    public Instant extractExpirationAsInstant(String token) {
+        return extractExpiration(token).toInstant();
     }
 }

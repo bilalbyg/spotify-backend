@@ -22,6 +22,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public AuthResponse register(RegisterRequest request) {
@@ -44,9 +45,8 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
 
-        // JWT üretimini kullanıcı nesnesi üzerinden yaparak rol bilgisini de token'a ekliyoruz.
         String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+        String refreshToken = refreshTokenService.createRefreshToken(user);
 
         return new AuthResponse(accessToken, refreshToken, user.getActualUsername(), user.getEmail());
     }
@@ -62,26 +62,30 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı!"));
 
         String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+        String refreshToken = refreshTokenService.createRefreshToken(user);
 
         return new AuthResponse(accessToken, refreshToken, user.getActualUsername(), user.getEmail());
     }
 
     @Override
     public AuthResponse refreshToken(RefreshTokenRequest request) {
-        String refreshToken = request.refreshToken();
-        if (!jwtService.isRefreshToken(refreshToken)) {
-            throw new RuntimeException("This is not a refresh token");
-        }
+        String oldRefreshToken = request.refreshToken();
+        String newRefreshToken = refreshTokenService.rotateRefreshToken(oldRefreshToken);
 
-        String email = jwtService.extractUserName(refreshToken);
+        String email = jwtService.extractUserName(newRefreshToken);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!jwtService.isTokenValid(refreshToken, user)) {
-            throw new RuntimeException("Invalid token");
-        }
-
         String newAccessToken = jwtService.generateAccessToken(user);
-        return new AuthResponse(newAccessToken, refreshToken, user.getActualUsername(), user.getEmail());
+
+        return new AuthResponse(
+          newAccessToken,
+          newRefreshToken,
+          user.getActualUsername(), user.getEmail()
+        );
+    }
+
+    @Override
+    public void logout(RefreshTokenRequest request) {
+
     }
 }
