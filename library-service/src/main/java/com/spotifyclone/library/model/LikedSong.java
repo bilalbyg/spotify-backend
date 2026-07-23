@@ -1,30 +1,25 @@
 package com.spotifyclone.library.model;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.mapping.Table;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.time.Instant;
 
-@Entity
-@Table(name = "liked_songs")
-@Getter
-@Setter
+@Table("liked_songs")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class LikedSong {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
-    @Column(nullable = false)
-    private UUID userId;
+    @PrimaryKey
+    private LikedSongKey key;
 
-    @Column(nullable = false)
-    private UUID songId;
-
-    @CreationTimestamp
-    private LocalDateTime likedAt;
+    @Column("liked_at")
+    private Instant likedAt;
 }

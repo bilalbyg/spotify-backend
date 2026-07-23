@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -51,6 +52,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     @Builder.Default
     private SubscriptionType subscriptionType = SubscriptionType.FREE;
+
+    private boolean emailVerified;
+
+    private OffsetDateTime emailVerifiedAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

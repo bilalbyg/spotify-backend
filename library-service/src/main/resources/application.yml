@@ -4,16 +4,15 @@ server:
 spring:
   application:
     name: library-service
-  datasource:
-    url: jdbc:postgresql://localhost:5432/spotify_catalog
-    username: spotify_user
-    password: spotify_password
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  cassandra:
+    contact-points: ${LIBRARY_CASSANDRA_CONTACT_POINTS:localhost}
+    port: ${LIBRARY_CASSANDRA_PORT:9042}
+    keyspace-name: ${LIBRARY_CASSANDRA_KEYSPACE:spotify_library}
+    local-datacenter: ${LIBRARY_CASSANDRA_LOCAL_DATACENTER:datacenter1}
+    schema-action: CREATE_IF_NOT_EXISTS
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY}

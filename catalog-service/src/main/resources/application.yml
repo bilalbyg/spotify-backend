@@ -9,9 +9,9 @@ spring:
 
   # Veritabanı Ayarları
   datasource:
-    url: jdbc:postgresql://localhost:5432/spotify_catalog
-    username: spotify_user
-    password: spotify_password
+    url: jdbc:postgresql://localhost:5433/spotify_catalog
+    username: spotify_catalog_user
+    password: spotify_catalog_password
     driver-class-name: org.postgresql.Driver
 
   jpa:

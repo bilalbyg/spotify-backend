@@ -1,14 +1,16 @@
 package com.spotifyclone.library.repository;
 
 import com.spotifyclone.library.model.LikedSong;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.spotifyclone.library.model.LikedSongKey;
+import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface LikedSongRepository extends JpaRepository<LikedSong, UUID> {
-    List<LikedSong> findByUserId(UUID userId);
-    boolean existsByUserIdAndSongId(UUID userId, UUID songId);
+public interface LikedSongRepository extends CassandraRepository<LikedSong, LikedSongKey> {
+    List<LikedSong> findByKeyUserId(UUID userId);
+    boolean existsByKeyUserIdAndKeySongId(UUID userId, UUID songId);
+    void deleteByKeyUserIdAndKeySongId(UUID userId, UUID songId);
 }
