@@ -86,6 +86,13 @@ public class SongServiceImpl implements SongService {
     }
 
     private SongResponse mapToResponse(Song song) {
-        return new SongResponse(song.getId(), song.getTitle(), song.getDuration(), song.getAudioUrl(), song.getAlbum().getId(), song.getAlbum().getTitle());
+        return new SongResponse(
+                song.getId(),
+                song.getTitle(),
+                song.getDuration(),
+                fileStorageService.buildPublicUrl(song.getAudioUrl()),
+                song.getAlbum().getId(),
+                song.getAlbum().getTitle()
+        );
     }
 }

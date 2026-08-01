@@ -1,6 +1,6 @@
 server:
+  address: 0.0.0.0
   port: 8081
-
 spring:
   config:
     import: optional:file:.env[.properties],optional:file:../.env[.properties]
@@ -44,10 +44,11 @@ spring:
         spring.json.add.type.headers: false
   # MinIO Object Storage Ayarları
 minio:
-  url: http://localhost:9005 # API portumuz (Arayüz olan 9006 değil!)
-  access-key: minioadmin
-  secret-key: minioadmin
-  bucket-name: spotify-files
+  url: ${MINIO_URL:http://localhost:9005}
+  public-url: ${MINIO_PUBLIC_URL:http://localhost:9005}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  bucket-name: ${MINIO_BUCKET_NAME:spotify-files}
 
 application:
   security:

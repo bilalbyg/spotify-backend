@@ -131,7 +131,7 @@ public class AlbumService {
                 album.getId(),
                 album.getTitle(),
                 album.getReleaseYear(),
-                album.getCoverImageUrl(),
+                fileStorageService.buildPublicUrl(album.getCoverImageUrl()),
                 album.getArtist().getId(),
                 album.getArtist().getName()
         );

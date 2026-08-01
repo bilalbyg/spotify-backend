@@ -54,7 +54,7 @@ public class ArtistService {
                 artist.getId(),
                 artist.getName(),
                 artist.getBio(),
-                artist.getImageUrl(),
+                fileStorageService.buildPublicUrl(artist.getImageUrl()),
                 artist.getPopularity()
         );
     }
