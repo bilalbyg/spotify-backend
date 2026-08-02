@@ -2,6 +2,7 @@ package com.spotifyclone.catalog.controller;
 
 import com.spotifyclone.catalog.dto.AlbumResponse;
 import com.spotifyclone.catalog.dto.CreateAlbumRequest;
+import com.spotifyclone.catalog.dto.DeleteAlbumResponse;
 import com.spotifyclone.catalog.service.AlbumService;
 import lombok.RequiredArgsConstructor;
 import com.spotifyclone.catalog.security.annotation.AdminOnly;
@@ -98,8 +99,8 @@ public class AlbumController {
 
     @GetMapping("/search/artist-release-year")
     public ResponseEntity<List<AlbumResponse>> searchAlbumsByArtistNameAndReleaseYearRange(@RequestParam String artistName,
-                                                                                            @RequestParam Integer releaseYearFrom,
-                                                                                            @RequestParam Integer releaseYearTo) {
+                                                                                           @RequestParam Integer releaseYearFrom,
+                                                                                           @RequestParam Integer releaseYearTo) {
         return ResponseEntity.ok(albumService.searchAlbumsByArtistNameAndReleaseYearRange(
                 artistName,
                 releaseYearFrom,
@@ -110,5 +111,11 @@ public class AlbumController {
     @GetMapping("/{id}")
     public ResponseEntity<AlbumResponse> getAlbumById(@PathVariable UUID id) {
         return ResponseEntity.ok(albumService.getAlbumResponseById(id));
+    }
+
+    @AdminOnly
+    @DeleteMapping()
+    public ResponseEntity<DeleteAlbumResponse> deleteAll() {
+        return ResponseEntity.ok(albumService.deleteAll());
     }
 }

@@ -2,10 +2,12 @@ package com.spotifyclone.catalog.service;
 
 import com.spotifyclone.catalog.dto.AlbumResponse;
 import com.spotifyclone.catalog.dto.CreateAlbumRequest;
+import com.spotifyclone.catalog.dto.DeleteAlbumResponse;
 import com.spotifyclone.catalog.model.Album;
 import com.spotifyclone.catalog.model.Artist;
 import com.spotifyclone.catalog.repository.AlbumRepository;
 import com.spotifyclone.catalog.specification.AlbumSpecifications;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -135,5 +137,16 @@ public class AlbumService {
                 album.getArtist().getId(),
                 album.getArtist().getName()
         );
+    }
+
+    @Transactional
+    public DeleteAlbumResponse deleteAll() {
+        long deleteAlbumCount = albumRepository.count();
+        if (deleteAlbumCount == 0) {
+            return new DeleteAlbumResponse(0, "Silinecek album bulunamadi");
+        }
+
+        albumRepository.deleteAll();
+        return new DeleteAlbumResponse(deleteAlbumCount, "Tüm albümler başarıyla silindi");
     }
 }
