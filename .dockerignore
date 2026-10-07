@@ -1,0 +1,7 @@
+.git
+.env
+**/.env
+**/src
+**/test
+README.md
+TODO.md
