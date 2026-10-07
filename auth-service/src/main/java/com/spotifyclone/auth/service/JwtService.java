@@ -90,6 +90,23 @@ public class JwtService {
         return username.equals(user.getEmail()) && !isTokenExpired(token);
     }
 
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    public String extractEmail(String token) {
+        return extractUserName(token);
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
     public Instant extractExpirationAsInstant(String token) {
         return extractExpiration(token).toInstant();
     }
