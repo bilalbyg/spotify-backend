@@ -4,8 +4,11 @@ import com.spotifyclone.catalog.dto.CreateSongRequest;
 // Controller'dan gelen tüm arama filtrelerini taşıyan kriter DTO'su.
 import com.spotifyclone.catalog.dto.SongSearchCriteria;
 import com.spotifyclone.catalog.dto.SongResponse;
+import com.spotifyclone.catalog.dto.UpdateSongRequest;
 import com.spotifyclone.catalog.model.Album;
+import com.spotifyclone.catalog.model.Playlist;
 import com.spotifyclone.catalog.model.Song;
+import com.spotifyclone.catalog.repository.PlaylistRepository;
 import com.spotifyclone.catalog.repository.SongRepository;
 // Kriter DTO'sunu JPA Specification zincirine çeviren builder.
 import com.spotifyclone.catalog.specification.SongSearchSpecificationBuilder;
@@ -17,6 +20,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,7 @@ public class SongServiceImpl implements SongService {
     private final SongRepository songRepository;
     private final AlbumService albumService;
     private final FileStorageService fileStorageService;
+    private final PlaylistRepository playlistRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -57,6 +62,42 @@ public class SongServiceImpl implements SongService {
     public SongResponse getSongById(UUID id) {
         Song song = songRepository.findById(id).orElseThrow(() -> new RuntimeException("Şarkı bulunamadı! ID: " + id));
         return mapToResponse(song);
+    }
+
+    @Override
+    public SongResponse updateSong(UUID id, UpdateSongRequest request) {
+        Song song = songRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Şarkı bulunamadı! ID: " + id));
+
+        if (request.title() != null && !request.title().isBlank()) {
+            song.setTitle(request.title());
+        }
+        if (request.duration() != null) {
+            song.setDuration(request.duration());
+        }
+        if (request.albumId() != null) {
+            Album album = albumService.getAlbumById(request.albumId());
+            song.setAlbum(album);
+        }
+
+        song = songRepository.save(song);
+        return mapToResponse(song);
+    }
+
+    @Override
+    @Transactional
+    public void deleteSong(UUID id) {
+        Song song = songRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Şarkı bulunamadı! ID: " + id));
+
+        // Şarkı playlistlerde varsa önce oralardan çıkar (playlist_songs FK kısıtlaması)
+        List<Playlist> playlists = playlistRepository.findAllBySongs_Id(id);
+        for (Playlist playlist : playlists) {
+            playlist.getSongs().remove(song);
+            playlistRepository.save(playlist);
+        }
+
+        songRepository.delete(song);
     }
 
     @Override
@@ -92,7 +133,8 @@ public class SongServiceImpl implements SongService {
                 song.getDuration(),
                 fileStorageService.buildPublicUrl(song.getAudioUrl()),
                 song.getAlbum().getId(),
-                song.getAlbum().getTitle()
+                song.getAlbum().getTitle(),
+                song.getAlbum().getArtist().getName()
         );
     }
 }

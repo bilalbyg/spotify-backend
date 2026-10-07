@@ -9,9 +9,9 @@ spring:
 
   # Veritabanı Ayarları
   datasource:
-    url: jdbc:postgresql://localhost:5433/spotify_catalog
-    username: spotify_catalog_user
-    password: spotify_catalog_password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/spotify_catalog}
+    username: ${SPRING_DATASOURCE_USERNAME:spotify_catalog_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:spotify_catalog_password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -36,7 +36,7 @@ spring:
 
   # KAFKA AYARLARI (İşte burası 'spring:' in hemen altında olmalı)
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

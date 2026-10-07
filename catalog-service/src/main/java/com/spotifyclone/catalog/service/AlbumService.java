@@ -3,9 +3,11 @@ package com.spotifyclone.catalog.service;
 import com.spotifyclone.catalog.dto.AlbumResponse;
 import com.spotifyclone.catalog.dto.CreateAlbumRequest;
 import com.spotifyclone.catalog.dto.DeleteAlbumResponse;
+import com.spotifyclone.catalog.dto.UpdateAlbumRequest;
 import com.spotifyclone.catalog.model.Album;
 import com.spotifyclone.catalog.model.Artist;
 import com.spotifyclone.catalog.repository.AlbumRepository;
+import com.spotifyclone.catalog.repository.SongRepository;
 import com.spotifyclone.catalog.specification.AlbumSpecifications;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class AlbumService {
     private final AlbumRepository albumRepository;
     private final ArtistService artistService;
     private final FileStorageService fileStorageService;
+    private final SongRepository songRepository;
 
     public AlbumResponse createAlbum(CreateAlbumRequest request) {
         // 1. Sanatçıyı artık kendi Repository'sinden değil, ArtistService üzerinden istiyoruz
@@ -126,6 +129,32 @@ public class AlbumService {
     public AlbumResponse getAlbumResponseById(UUID id) {
         Album album = getAlbumById(id); // Zaten var olan Entity bulucu metodunu kullanıyoruz
         return mapToResponse(album);    // DTO'ya çevirip yolluyoruz
+    }
+
+    public AlbumResponse updateAlbum(UUID id, UpdateAlbumRequest request) {
+        Album album = getAlbumById(id);
+
+        if (request.title() != null && !request.title().isBlank()) {
+            album.setTitle(request.title());
+        }
+        if (request.releaseYear() != null) {
+            album.setReleaseYear(request.releaseYear());
+        }
+        if (request.artistId() != null) {
+            Artist artist = artistService.getArtistById(request.artistId());
+            album.setArtist(artist);
+        }
+
+        album = albumRepository.save(album);
+        return mapToResponse(album);
+    }
+
+    public void deleteAlbum(UUID id) {
+        Album album = getAlbumById(id);
+        if (songRepository.existsByAlbumId(id)) {
+            throw new RuntimeException("Bu albümde şarkılar var. Önce albümdeki şarkıları silmelisiniz.");
+        }
+        albumRepository.delete(album);
     }
 
     private AlbumResponse mapToResponse(Album album) {

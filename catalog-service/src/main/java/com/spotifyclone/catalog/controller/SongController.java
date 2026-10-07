@@ -4,6 +4,7 @@ import com.spotifyclone.catalog.dto.CreateSongRequest;
 // Arama endpoint'inde gelen query parametrelerini tek obje olarak taşımak için kriter DTO'su.
 import com.spotifyclone.catalog.dto.SongSearchCriteria;
 import com.spotifyclone.catalog.dto.SongResponse;
+import com.spotifyclone.catalog.dto.UpdateSongRequest;
 import com.spotifyclone.catalog.service.SongService;
 import lombok.RequiredArgsConstructor;
 import com.spotifyclone.catalog.security.annotation.AdminOnly;
@@ -42,6 +43,21 @@ public class SongController {
     @GetMapping("/{id}")
     public ResponseEntity<SongResponse> getSongById(@PathVariable UUID id) {
         return ResponseEntity.ok(songService.getSongById(id));
+    }
+
+    // Şarkı güncelleme işlemini sadece ADMIN rolüne açıyoruz.
+    @AdminOnly
+    @PutMapping("/{id}")
+    public ResponseEntity<SongResponse> updateSong(@PathVariable UUID id, @RequestBody UpdateSongRequest request) {
+        return ResponseEntity.ok(songService.updateSong(id, request));
+    }
+
+    // Şarkı silme işlemini sadece ADMIN rolüne açıyoruz.
+    @AdminOnly
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSong(@PathVariable UUID id) {
+        songService.deleteSong(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/artist/{artistId}")

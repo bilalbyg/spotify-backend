@@ -11,4 +11,5 @@ public interface SongRepository extends JpaRepository<Song, UUID>, JpaSpecificat
 
     List<Song> findByAlbumId(UUID albumId);
     List<Song> findByAlbumArtistId(UUID artistId);
+    boolean existsByAlbumId(UUID albumId);
 }

@@ -2,7 +2,9 @@ package com.spotifyclone.catalog.service;
 
 import com.spotifyclone.catalog.dto.ArtistResponse;
 import com.spotifyclone.catalog.dto.CreateArtistRequest;
+import com.spotifyclone.catalog.dto.CreateBulkArtistRequest;
 import com.spotifyclone.catalog.model.Artist;
+import com.spotifyclone.catalog.repository.AlbumRepository;
 import com.spotifyclone.catalog.repository.ArtistRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +27,12 @@ public class ArtistServiceTest {
 
     @Mock
     private ArtistRepository artistRepository;
+
+    @Mock
+    private AlbumRepository albumRepository;
+
+    @Mock
+    private FileStorageService fileStorageService;
 
     @InjectMocks
     private ArtistService artistService;
@@ -114,5 +124,36 @@ public class ArtistServiceTest {
 
         // findAll metodu tam olarak 1 kere çağrılmış olmalı.
         verify(artistRepository, times(1)).findAll();
+    }
+
+    // ---------------------------------------------------------
+    // TEST 4: TOPLU SANATÇI EKLEME SENARYOSU
+    // ---------------------------------------------------------
+    @Test
+    void createManyArtists_WhenArtistsDoNotExist_ShouldReturnAllResponses() {
+        // 1. GIVEN:
+        List<CreateBulkArtistRequest> bulkRequests = List.of(
+                new CreateBulkArtistRequest("Luna Echo", "Dream pop", 0),
+                new CreateBulkArtistRequest("Nova Cascade", "Electronic", 1)
+        );
+        List<MultipartFile> images = List.of(
+                new MockMultipartFile("images", "luna.png", "image/png", new byte[]{1, 2, 3}),
+                new MockMultipartFile("images", "nova.png", "image/png", new byte[]{4, 5, 6})
+        );
+
+        when(artistRepository.existsByName("Luna Echo")).thenReturn(false);
+        when(artistRepository.existsByName("Nova Cascade")).thenReturn(false);
+        when(fileStorageService.uploadFile(any(MultipartFile.class), eq("images")))
+                .thenReturn("images/luna.png", "images/nova.png");
+        when(artistRepository.save(any(Artist.class))).thenReturn(savedArtist);
+
+        // 2. WHEN:
+        List<ArtistResponse> responses = artistService.createManyArtists(bulkRequests, images);
+
+        // 3. THEN:
+        assertNotNull(responses);
+        assertEquals(2, responses.size());
+        verify(artistRepository, times(2)).save(any(Artist.class));
+        verify(fileStorageService, times(2)).uploadFile(any(MultipartFile.class), eq("images"));
     }
 }

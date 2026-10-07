@@ -8,5 +8,6 @@ public record SongResponse(
         Integer duration,
         String audioUrl,
         UUID albumId,
-        String albumTitle
+        String albumTitle,
+        String artistName
 ) {}

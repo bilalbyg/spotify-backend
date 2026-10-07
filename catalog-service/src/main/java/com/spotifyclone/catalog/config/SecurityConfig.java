@@ -2,6 +2,8 @@ package com.spotifyclone.catalog.config;
 
 // JWT doğrulaması yapan özel filtre sınıfımız.
 import com.spotifyclone.catalog.security.JwtAuthenticationFilter;
+// Rol sabitlerini tek noktadan yönetmek için kullanılan sınıf.
+import com.spotifyclone.catalog.security.constant.Constants;
 // Lombok ile constructor üretmek için kullanılan anotasyon.
 import lombok.RequiredArgsConstructor;
 // Spring bean tanımı yapmak için kullanılan anotasyon.
@@ -18,6 +20,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 // Oturum yönetim politikasını seçmek için kullanılan enum.
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.http.HttpMethod;
 // Security filter chain bean tipini temsil eder.
 import org.springframework.security.web.SecurityFilterChain;
 // Özel JWT filtresini bu filtreden önce çalıştırmak için referans alınan sınıf.
@@ -49,10 +52,20 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 // Sunucu tarafında session tutmadan her isteği token ile doğruluyoruz.
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Tüm endpointlerin önce kimlik doğrulamasından geçmesini zorunlu kılıyoruz.
+                // Tüm endpointlerin yalnızca ADMIN rolü ile erişilebilir olmasını sağlıyoruz.
                 .authorizeHttpRequests(auth -> auth
-                        // Tanımlı tüm istekler authentication gerektirir.
-                        .anyRequest().authenticated()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/songs/**",
+                                "/api/v1/albums/**",
+                                "/api/v1/artists/**",
+                                "/api/v1/playlists/**",
+                                "/api/v1/podcasts/**",
+                                "/api/v1/episodes/**",
+                                "/api/v1/genres/**",
+                                "/api/v1/lyrics/**").authenticated()
+                        // Tanımlı tüm istekler ADMIN yetkisi gerektirir.
+                        .anyRequest().hasAuthority(Constants.ROLE_ADMIN)
                 )
                 // JWT filtresini kullanıcı adı/şifre filtresinden önce zincire ekliyoruz.
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

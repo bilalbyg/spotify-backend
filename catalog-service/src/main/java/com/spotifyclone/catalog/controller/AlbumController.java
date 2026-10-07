@@ -3,6 +3,7 @@ package com.spotifyclone.catalog.controller;
 import com.spotifyclone.catalog.dto.AlbumResponse;
 import com.spotifyclone.catalog.dto.CreateAlbumRequest;
 import com.spotifyclone.catalog.dto.DeleteAlbumResponse;
+import com.spotifyclone.catalog.dto.UpdateAlbumRequest;
 import com.spotifyclone.catalog.service.AlbumService;
 import lombok.RequiredArgsConstructor;
 import com.spotifyclone.catalog.security.annotation.AdminOnly;
@@ -111,6 +112,21 @@ public class AlbumController {
     @GetMapping("/{id}")
     public ResponseEntity<AlbumResponse> getAlbumById(@PathVariable UUID id) {
         return ResponseEntity.ok(albumService.getAlbumResponseById(id));
+    }
+
+    // Albüm güncelleme işlemini sadece ADMIN rolüne açıyoruz.
+    @AdminOnly
+    @PutMapping("/{id}")
+    public ResponseEntity<AlbumResponse> updateAlbum(@PathVariable UUID id, @RequestBody UpdateAlbumRequest request) {
+        return ResponseEntity.ok(albumService.updateAlbum(id, request));
+    }
+
+    // Albüm silme işlemini sadece ADMIN rolüne açıyoruz.
+    @AdminOnly
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAlbum(@PathVariable UUID id) {
+        albumService.deleteAlbum(id);
+        return ResponseEntity.noContent().build();
     }
 
     @AdminOnly

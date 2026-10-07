@@ -11,5 +11,7 @@ public interface AlbumRepository extends JpaRepository<Album, UUID>, JpaSpecific
 
     List<Album> findByArtistId(UUID artistId);
 
+    boolean existsByArtistId(UUID artistId);
+
     boolean existsByTitleAndArtistId(String title, UUID artistId);
 }
