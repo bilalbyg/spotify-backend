@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Dreams in Blue",
+    "releaseYear": 2026,
+    "artistName": "Luna Rivers",
+    "coverImage": "dreams-in-blue.jpg"
+  },
+  {
+    "title": "Digital Horizon",
+    "releaseYear": 2026,
+    "artistName": "Nova Echo",
+    "coverImage": "digital-horizon.jpg"
+  },
+  {
+    "title": "After Dark",
+    "releaseYear": 2026,
+    "artistName": "Midnight Pulse",
+    "coverImage": "after-dark.jpg"
+  }
+]

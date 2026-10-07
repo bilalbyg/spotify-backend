@@ -1,0 +1,44 @@
+[
+  {
+    "title": "Blue Tides",
+    "duration": 207,
+    "albumTitle": "Dreams in Blue",
+    "artistName": "Luna Rivers",
+    "audioFile": "blue-tides.mp3"
+  },
+  {
+    "title": "River of Light",
+    "duration": 279,
+    "albumTitle": "Dreams in Blue",
+    "artistName": "Luna Rivers",
+    "audioFile": "river-of-light.mp3"
+  },
+  {
+    "title": "Synthetic Sunrise",
+    "duration": 173,
+    "albumTitle": "Digital Horizon",
+    "artistName": "Nova Echo",
+    "audioFile": "synthetic-sunrise.mp3"
+  },
+  {
+    "title": "Signal Lost",
+    "duration": 280,
+    "albumTitle": "Digital Horizon",
+    "artistName": "Nova Echo",
+    "audioFile": "signal-lost.mp3"
+  },
+  {
+    "title": "City After Midnight",
+    "duration": 191,
+    "albumTitle": "After Dark",
+    "artistName": "Midnight Pulse",
+    "audioFile": "city-after-midnight.mp3"
+  },
+  {
+    "title": "Fading Stars",
+    "duration": 421,
+    "albumTitle": "After Dark",
+    "artistName": "Midnight Pulse",
+    "audioFile": "fading-stars.mp3"
+  }
+]

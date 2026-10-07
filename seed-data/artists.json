@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Luna Rivers",
+    "bio": "Alternatif pop ve elektronik müzik sanatçısı.",
+    "image": "luna-rivers.jpg"
+  },
+  {
+    "name": "Nova Echo",
+    "bio": "Elektronik müzik prodüktörü ve bağımsız sanatçı.",
+    "image": "nova-echo.jpg"
+  },
+  {
+    "name": "Midnight Pulse",
+    "bio": "Synthwave ve elektronik müzik grubu.",
+    "image": "midnight-pulse.jpg"
+  }
+]
