@@ -1,5 +1,5 @@
 server:
-  port: 9000
+  port: 8084
   address: 0.0.0.0
 
 spring:
@@ -8,21 +8,56 @@ spring:
 
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
       routes:
-        # Catalog Service Yönlendirmesi
-        - id: catalog-service-route
-          uri: http://localhost:8081
+        # Auth Service Yönlendirmesi
+        - id: auth-service-route
+          uri: ${AUTH_SERVICE_URL:http://localhost:8082}
           predicates:
-            - Path=/api/v1/catalog/** # Gelen istek bu path ile başlıyorsa catalog-service'e gönder
+            - Path=/api/v1/auth/**
 
-        # Library Service Yönlendirmesi
-        - id: library-service-route
-          uri: http://localhost:8082
+        # Catalog Service Yönlendirmeleri
+        - id: catalog-songs-route
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
           predicates:
-            - Path=/api/v1/library/** # Gelen istek bu path ile başlıyorsa library-service'e gönder
+            - Path=/api/v1/songs/**
+        - id: catalog-artists-route
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/artists/**
+        - id: catalog-albums-route
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/albums/**
+        - id: catalog-playlists-route
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/playlists/**
+        - id: catalog-podcasts-route
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/podcasts/**
+        - id: catalog-episodes-route
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/episodes/**
+        - id: catalog-genres-route
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/genres/**
+        - id: catalog-lyrics-route
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/lyrics/**
 
-        # YENİ EKLENEN: MinIO (Dosya Sunucusu) Yönlendirmesi
+        # MinIO (Dosya Sunucusu) Yönlendirmesi
         - id: minio-route
-          uri: http://localhost:9005 # ⚠️ DİKKAT: Buradaki 9005'i MinIO'nun gerçek API portu ile değiştirmelisin!
+          uri: ${MINIO_SERVICE_URL:http://localhost:9005}
           predicates:
-            - Path=/spotify-files/** # Gelen istek spotify-files ile başlıyorsa MinIO'ya gönder
+            - Path=/spotify-files/**
