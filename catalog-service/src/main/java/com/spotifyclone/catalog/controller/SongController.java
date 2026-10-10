@@ -1,6 +1,7 @@
 package com.spotifyclone.catalog.controller;
 
 import com.spotifyclone.catalog.dto.CreateSongRequest;
+import com.spotifyclone.catalog.dto.CreateBulkSongRequest;
 // Arama endpoint'inde gelen query parametrelerini tek obje olarak taşımak için kriter DTO'su.
 import com.spotifyclone.catalog.dto.SongSearchCriteria;
 import com.spotifyclone.catalog.dto.SongResponse;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +30,17 @@ public class SongController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SongResponse> createSong(@ModelAttribute CreateSongRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(songService.createSong(request));
+    }
+
+    @AdminOnly
+    @PostMapping(value = "/bulk", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<SongResponse>> createManySongs(
+            @RequestParam("albumId") UUID albumId,
+            @RequestPart("songs") List<CreateBulkSongRequest> songs,
+            @RequestPart("audioFiles") List<MultipartFile> audioFiles
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(songService.createManySongs(albumId, songs, audioFiles));
     }
 
     @GetMapping("/album/{albumId}")

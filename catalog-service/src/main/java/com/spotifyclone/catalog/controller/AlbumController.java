@@ -2,6 +2,7 @@ package com.spotifyclone.catalog.controller;
 
 import com.spotifyclone.catalog.dto.AlbumResponse;
 import com.spotifyclone.catalog.dto.CreateAlbumRequest;
+import com.spotifyclone.catalog.dto.CreateBulkAlbumRequest;
 import com.spotifyclone.catalog.dto.DeleteAlbumResponse;
 import com.spotifyclone.catalog.dto.UpdateAlbumRequest;
 import com.spotifyclone.catalog.service.AlbumService;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +29,18 @@ public class AlbumController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AlbumResponse> createAlbum(@ModelAttribute CreateAlbumRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(albumService.createAlbum(request));
+    }
+
+    @AdminOnly
+    @PostMapping(value = "/bulk", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<AlbumResponse>> createManyAlbums(
+            @RequestParam("artistId") UUID artistId,
+            @RequestPart("albums") List<CreateBulkAlbumRequest> albums,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
+    ) {
+        List<MultipartFile> safeImages = images != null ? images : List.of();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(albumService.createManyAlbums(artistId, albums, safeImages));
     }
 
     @GetMapping("/artist/{artistId}")

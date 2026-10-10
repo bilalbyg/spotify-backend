@@ -1,6 +1,7 @@
 package com.spotifyclone.catalog.service;
 
 import com.spotifyclone.catalog.dto.CreateSongRequest;
+import com.spotifyclone.catalog.dto.CreateBulkSongRequest;
 // Controller'dan gelen tüm arama filtrelerini taşıyan kriter DTO'su.
 import com.spotifyclone.catalog.dto.SongSearchCriteria;
 import com.spotifyclone.catalog.dto.SongResponse;
@@ -21,6 +22,7 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +58,51 @@ public class SongServiceImpl implements SongService {
 
         song = songRepository.save(song);
         return mapToResponse(song);
+    }
+
+    @Override
+    @Transactional
+    public List<SongResponse> createManySongs(UUID albumId, List<CreateBulkSongRequest> requests,
+                                               List<MultipartFile> audioFiles) {
+        if (requests == null || requests.isEmpty()) {
+            return List.of();
+        }
+
+        Album album = albumService.getAlbumById(albumId);
+        List<MultipartFile> safeAudioFiles = audioFiles != null ? audioFiles : List.of();
+
+        for (CreateBulkSongRequest request : requests) {
+            if (request.title() == null || request.title().isBlank()) {
+                throw new IllegalArgumentException("Şarkı adı boş olamaz.");
+            }
+            if (request.duration() == null || request.duration() < 0) {
+                throw new IllegalArgumentException("Şarkı süresi sıfır veya daha büyük olmalıdır.");
+            }
+            Integer audioIndex = request.audioIndex();
+            if (audioIndex == null || audioIndex < 0 || audioIndex >= safeAudioFiles.size()) {
+                throw new IllegalArgumentException("Her şarkı için ses dosyası yüklemek zorunludur.");
+            }
+            MultipartFile audioFile = safeAudioFiles.get(audioIndex);
+            if (audioFile == null || audioFile.isEmpty()) {
+                throw new IllegalArgumentException("Her şarkı için boş olmayan bir ses dosyası yükleyin.");
+            }
+        }
+
+        List<SongResponse> responses = new ArrayList<>();
+        for (CreateBulkSongRequest request : requests) {
+            MultipartFile audioFile = safeAudioFiles.get(request.audioIndex());
+            String audioUrl = fileStorageService.uploadFile(audioFile, "songs");
+            Song song = Song.builder()
+                    .title(request.title())
+                    .duration(request.duration())
+                    .audioUrl(audioUrl)
+                    .album(album)
+                    .build();
+
+            responses.add(mapToResponse(songRepository.save(song)));
+        }
+
+        return responses;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.spotifyclone.catalog.service;
 
 import com.spotifyclone.catalog.dto.AlbumResponse;
 import com.spotifyclone.catalog.dto.CreateAlbumRequest;
+import com.spotifyclone.catalog.dto.CreateBulkAlbumRequest;
 import com.spotifyclone.catalog.dto.DeleteAlbumResponse;
 import com.spotifyclone.catalog.dto.UpdateAlbumRequest;
 import com.spotifyclone.catalog.model.Album;
@@ -13,8 +14,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -52,6 +57,57 @@ public class AlbumService {
 
         album = albumRepository.save(album);
         return mapToResponse(album);
+    }
+
+    @Transactional
+    public List<AlbumResponse> createManyAlbums(UUID artistId, List<CreateBulkAlbumRequest> requests, List<MultipartFile> images) {
+        if (requests == null || requests.isEmpty()) {
+            return List.of();
+        }
+
+        Artist artist = artistService.getArtistById(artistId);
+        Set<String> seenTitles = new HashSet<>();
+
+        for (CreateBulkAlbumRequest request : requests) {
+            String title = request.title();
+            if (title == null || title.isBlank()) {
+                throw new RuntimeException("Albüm adı boş olamaz.");
+            }
+            if (!seenTitles.add(title)) {
+                throw new RuntimeException("Aynı istek içinde '" + title + "' albümü birden fazla kez eklenemez.");
+            }
+            if (albumRepository.existsByTitleAndArtistId(title, artistId)) {
+                throw new RuntimeException("Bu sanatçının '" + title + "' adında bir albümü zaten var.");
+            }
+        }
+
+        List<AlbumResponse> responses = new ArrayList<>();
+        List<MultipartFile> safeImages = images != null ? images : List.of();
+
+        for (int i = 0; i < requests.size(); i++) {
+            CreateBulkAlbumRequest request = requests.get(i);
+
+            String uploadedImageUrl = null;
+            Integer imageIndex = request.imageIndex();
+            if (imageIndex != null && imageIndex >= 0 && imageIndex < safeImages.size()) {
+                MultipartFile image = safeImages.get(imageIndex);
+                if (image != null && !image.isEmpty()) {
+                    uploadedImageUrl = fileStorageService.uploadFile(image, "albums");
+                }
+            }
+
+            Album album = Album.builder()
+                    .title(request.title())
+                    .releaseYear(request.releaseYear())
+                    .coverImageUrl(uploadedImageUrl)
+                    .artist(artist)
+                    .build();
+
+            album = albumRepository.save(album);
+            responses.add(mapToResponse(album));
+        }
+
+        return responses;
     }
 
     public List<AlbumResponse> getAlbumsByArtist(UUID artistId) {
