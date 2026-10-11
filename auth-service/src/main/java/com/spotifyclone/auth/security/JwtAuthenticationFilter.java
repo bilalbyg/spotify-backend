@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt = authHeader.substring(7);
 
         if (!jwtService.isTokenValid(jwt)) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("JWT authenticated request - email: {}, role: {}, path: {}", email, role, request.getRequestURI());
 
             if (role == null || role.isBlank()) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Role claim is mandatory");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 

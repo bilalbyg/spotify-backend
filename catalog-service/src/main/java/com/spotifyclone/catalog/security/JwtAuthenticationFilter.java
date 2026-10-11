@@ -58,8 +58,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Geçersiz token için SecurityContext oluşturmadan akışı devam ettiriyoruz.
         if (!jwtService.isTokenValid(jwt)) {
-            // Authorization header verildiği halde token geçersizse isteği burada 401 ile sonlandırıyoruz.
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            // sendError error-dispatch tetikleyip Spring Security tarafından 403'e çevrilebildiğinden
+            // geçersiz token durumunu doğrudan 401 olarak döndürüyoruz.
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             // Bu filtre içindeki işlemleri burada sonlandırıyoruz.
             return;
         }
@@ -73,8 +74,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // Role claim'i yoksa yetki üretmeyip isteği kimliksiz bırakıyoruz.
             if (role == null || role.isBlank()) {
-                // Authorization header verildiği halde role claim eksikse isteği burada 401 ile sonlandırıyoruz.
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Role claim is mandatory");
+                // Kimlik doğrulama claim'i eksik; isteği doğrudan 401 ile sonlandırıyoruz.
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 // Bu filtre içindeki işlemleri burada sonlandırıyoruz.
                 return;
             }

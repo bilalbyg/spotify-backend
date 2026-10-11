@@ -6,6 +6,7 @@ import com.spotifyclone.catalog.security.JwtAuthenticationFilter;
 import com.spotifyclone.catalog.security.constant.Constants;
 // Lombok ile constructor üretmek için kullanılan anotasyon.
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 // Spring bean tanımı yapmak için kullanılan anotasyon.
 import org.springframework.context.annotation.Bean;
 // Bu sınıfın bir konfigürasyon sınıfı olduğunu belirtir.
@@ -23,6 +24,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.http.HttpMethod;
 // Security filter chain bean tipini temsil eder.
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 // Özel JWT filtresini bu filtreden önce çalıştırmak için referans alınan sınıf.
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -50,6 +52,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 // CORS ayarlarında varsayılan olarak mevcut CorsConfigurationSource bean'ini kullanıyoruz.
                 .cors(Customizer.withDefaults())
+                // Kimliği doğrulanmamış istekler yenileme akışı için 401; rolü yetmeyenler 403 alır.
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.setStatus(HttpStatus.FORBIDDEN.value())))
                 // Sunucu tarafında session tutmadan her isteği token ile doğruluyoruz.
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Tüm endpointlerin yalnızca ADMIN rolü ile erişilebilir olmasını sağlıyoruz.
