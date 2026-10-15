@@ -11,16 +11,15 @@ import jakarta.persistence.Version;
 import java.util.UUID;
 
 /**
- * POC fixture entity for the session control aggregate (owner + lifecycle
- * status).
+ * POC fixture entity for the session control aggregate (owner, lifecycle
+ * status, and skip-vote state).
  *
- * <p><b>Slice 2 (green) adds the {@code @Version} column.</b> Hibernate emits
- * {@code UPDATE ... WHERE id=? AND version=?}, so a concurrent write that
- * committed first makes the loser raise an optimistic lock exception; the
- * service then re-reads the fresh row and re-checks its guard. This prevents
- * the silent clobber Slice 1 demonstrated (84/200 ends silently undone).
+ * <p>Holds the {@code @Version} column added in POC-2 (part 1) plus the
+ * skip-vote fields: {@code activeMemberCount} drives the ADR-004 threshold and
+ * {@code skippedTrackId} is the compare-and-swap marker that makes a skip
+ * trigger exactly once under concurrent votes.
  *
- * <p><b>Slice 1 (red) had no {@code @Version}</b>. NOT production code.
+ * <p>NOT production code.
  */
 @Entity
 @Table(name = "poc_jam_session_control")
@@ -41,14 +40,25 @@ public class JamSessionControlEntity {
     @Column(name = "status", nullable = false)
     private JamSessionControl.Status status;
 
+    @Column(name = "active_member_count", nullable = false)
+    private int activeMemberCount;
+
+    @Column(name = "skipped_track_id")
+    private UUID skippedTrackId;
+
     protected JamSessionControlEntity() {
         // JPA
     }
 
-    public JamSessionControlEntity(UUID id, UUID hostUserId, JamSessionControl.Status status) {
+    public JamSessionControlEntity(
+            UUID id,
+            UUID hostUserId,
+            JamSessionControl.Status status,
+            int activeMemberCount) {
         this.id = id;
         this.hostUserId = hostUserId;
         this.status = status;
+        this.activeMemberCount = activeMemberCount;
     }
 
     public UUID getId() {
@@ -73,5 +83,17 @@ public class JamSessionControlEntity {
 
     public void setStatus(JamSessionControl.Status status) {
         this.status = status;
+    }
+
+    public int getActiveMemberCount() {
+        return activeMemberCount;
+    }
+
+    public UUID getSkippedTrackId() {
+        return skippedTrackId;
+    }
+
+    public void setSkippedTrackId(UUID skippedTrackId) {
+        this.skippedTrackId = skippedTrackId;
     }
 }

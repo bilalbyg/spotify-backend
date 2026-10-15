@@ -42,9 +42,14 @@ public class JamSessionControlService implements JamSessionControl {
 
     @Override
     public UUID createSession(UUID hostId) {
+        return createSession(hostId, 5);
+    }
+
+    @Override
+    public UUID createSession(UUID hostId, int activeMemberCount) {
         return transactionTemplate.execute(status -> {
             JamSessionControlEntity session =
-                    new JamSessionControlEntity(UUID.randomUUID(), hostId, ACTIVE);
+                    new JamSessionControlEntity(UUID.randomUUID(), hostId, ACTIVE, activeMemberCount);
             return repository.save(session).getId();
         });
     }

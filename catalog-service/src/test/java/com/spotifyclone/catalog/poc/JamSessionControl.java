@@ -25,8 +25,11 @@ public interface JamSessionControl {
     record SessionState(UUID hostId, Status status) {
     }
 
-    /** Creates a new session owned by {@code hostId}. */
+    /** Creates a new session owned by {@code hostId} with 5 active members. */
     UUID createSession(UUID hostId);
+
+    /** Creates a new session owned by {@code hostId} with the given active member count. */
+    UUID createSession(UUID hostId, int activeMemberCount);
 
     /**
      * Transfers host ownership to {@code newHostId}. Must reject the transfer
