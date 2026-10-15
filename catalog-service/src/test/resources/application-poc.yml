@@ -1,0 +1,32 @@
+# POC profile — loaded via @ActiveProfiles("poc") in the POC tests under
+# src/test/java/com/spotifyclone/catalog/poc/.
+#
+# Unlike the "test" profile (which points at in-memory H2 so CI context tests
+# stay self-contained), the POC profile targets the REAL PostgreSQL instance
+# that spotify-backend/docker-compose.yml runs on localhost:5433. Concurrency
+# POCs must exercise real MVCC + optimistic-lock behaviour, which H2 cannot
+# faithfully reproduce.
+#
+# Precondition: docker compose up -d catalog-postgresql (or the full infra).
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/spotify_catalog
+    username: spotify_catalog_user
+    password: spotify_catalog_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    open-in-view: false
+
+application:
+  security:
+    jwt:
+      # 64-byte base64 fixture — non-secret, only used to boot the context in
+      # POC tests. Production reads this from the JWT_SECRET_KEY env var.
+      secret-key: dGVzdC1qd3Qtc2VjcmV0LWtleS1mb3ItbG9jYWwtc3ByaW5nLWJvb3QtYXBwbGljYXRpb25z
