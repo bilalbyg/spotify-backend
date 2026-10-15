@@ -1,0 +1,35 @@
+# Test profile overrides for the auth-service context test.
+#
+# Loaded via @ActiveProfiles("test") on the AuthServiceApplicationTests.
+# The datasource is repointed to an in-memory H2 instance running in MySQL
+# compatibility mode so the schema (see application.yaml) boots unchanged.
+# The bootstrap admin placeholders are also blanked so the listener that
+# runs at startup does not try to create a real admin user against an
+# unavailable DB.
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:spotify_auth_test;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      dialect: org.hibernate.dialect.H2Dialect
+    show-sql: false
+
+application:
+  bootstrap:
+    admin:
+      # The AdminBootstrapApplicationStartedListener refuses to start if
+      # these are empty. We supply fixture values so the listener creates a
+      # test-only admin and the context boots cleanly.
+      email: test-admin@example.com
+      username: testadmin
+      # base64("testadmin") — non-secret fixture.
+      password-b64: dGVzdGFkbWlu
+  security:
+    jwt:
+      # 64-byte base64 fixture — non-secret, only used to boot the context.
+      secret-key: dGVzdC1qd3Qtc2VjcmV0LWtleS1mb3ItbG9jYWwtc3ByaW5nLWJvb3QtYXBwbGljYXRpb25z

@@ -11,7 +11,11 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOriginPatterns: "*"
+            # Phase 0 hardening: replace wildcard origins with an explicit
+            # whitelist driven by ALLOWED_ORIGINS (comma-separated). Defaults
+            # match the local Jenkins/Vite ports so a fresh checkout still works
+            # without extra setup. Override ALLOWED_ORIGINS in prod.
+            allowedOrigins: ${ALLOWED_ORIGINS:http://localhost:3001,http://localhost:3002}
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true

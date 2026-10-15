@@ -43,9 +43,12 @@ class AlbumControllerTest {
         );
         when(albumService.createManyAlbums(eq(artistId), anyList(), anyList())).thenReturn(List.of());
 
+        // Spring 6.1: .file() must be called before .param() so the
+        // request-builder chain stays typed as
+        // MockMultipartHttpServletRequestBuilder for the .file() call.
         mockMvc.perform(multipart("/api/v1/albums/bulk")
-                        .param("artistId", artistId.toString())
-                        .file(albumsPart))
+                        .file(albumsPart)
+                        .param("artistId", artistId.toString()))
                 .andExpect(status().isCreated());
 
         verify(albumService).createManyAlbums(eq(artistId), anyList(), anyList());

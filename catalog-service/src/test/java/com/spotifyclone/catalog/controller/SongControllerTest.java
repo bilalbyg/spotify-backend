@@ -56,11 +56,12 @@ class SongControllerTest {
         );
         when(songService.createManySongs(eq(albumId), anyList(), anyList())).thenReturn(List.of());
 
+        // Spring 6.1: .file() must be called before .param(); see AlbumControllerTest.
         mockMvc.perform(multipart("/api/v1/songs/bulk")
-                        .param("albumId", albumId.toString())
                         .file(songsPart)
                         .file(audioFile)
-                        .file(secondAudioFile))
+                        .file(secondAudioFile)
+                        .param("albumId", albumId.toString()))
                 .andExpect(status().isCreated());
 
         verify(songService).createManySongs(eq(albumId), anyList(), anyList());

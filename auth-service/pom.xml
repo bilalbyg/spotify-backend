@@ -72,6 +72,18 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
+            H2 in-memory database for the @SpringBootTest context test.
+            Per spotify-backend/AGENTS.md, external service dependencies in
+            context tests must be declared explicitly; H2 keeps the test
+            self-contained. MySQL compatibility mode lets the existing JPA
+            schema boot unchanged in tests.
+        -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
