@@ -1,6 +1,7 @@
 package com.spotifyclone.catalog.jam.application.usecase;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.spotifyclone.catalog.jam.application.exception.SessionNotFoundException;
 import com.spotifyclone.catalog.jam.application.port.JamRepository;
 import com.spotifyclone.catalog.jam.application.port.OutboxRepository;
@@ -21,6 +22,8 @@ public class AddTrackUseCase {
         this.repository = repository;
         this.outbox = outbox;
     }
+
+    @Transactional
 
     public void execute(JamId sessionId, UserId actor, TrackId track, IdempotencyKey key) {
         JamSession session = repository.findById(sessionId)

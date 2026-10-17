@@ -27,3 +27,8 @@ application:
       # 64-byte base64 fixture — non-secret, only used to boot the context
       # in tests. Production reads this from the JWT_SECRET_KEY env var.
       secret-key: dGVzdC1qd3Qtc2VjcmV0LWtleS1mb3ItbG9jYWwtc3ByaW5nLWJvb3QtYXBwbGljYXRpb25z
+
+jam:
+  outbox:
+    # Effectively disable the scheduled poller during tests.
+    poll-delay-ms: 999999999

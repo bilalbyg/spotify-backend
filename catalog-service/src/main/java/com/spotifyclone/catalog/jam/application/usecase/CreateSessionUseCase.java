@@ -1,6 +1,7 @@
 package com.spotifyclone.catalog.jam.application.usecase;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.spotifyclone.catalog.jam.application.port.JamRepository;
 import com.spotifyclone.catalog.jam.application.port.OutboxRepository;
 import com.spotifyclone.catalog.jam.domain.model.InviteLink;
@@ -19,6 +20,8 @@ public class CreateSessionUseCase {
         this.repository = repository;
         this.outbox = outbox;
     }
+
+    @Transactional
 
     public CreateSessionResult execute(UserId host) {
         JamSession session = JamSession.create(host, InviteLink.generate());
