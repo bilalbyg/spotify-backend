@@ -14,6 +14,9 @@ import java.util.List;
  */
 public sealed interface JamEvent {
 
+    /** The session this event belongs to (drives realtime topic routing). */
+    JamId sessionId();
+
     record SessionCreated(JamId sessionId, UserId host, InviteLink inviteLink) implements JamEvent {
     }
 
