@@ -1,0 +1,7 @@
+application:
+  security:
+    jwt:
+      # 64-byte base64 fixture — non-secret, only used to boot the gateway in
+      # tests. Production reads this from the JWT_SECRET_KEY env var (shared
+      # with auth-service and catalog-service).
+      secret-key: dGVzdC1qd3Qtc2VjcmV0LWtleS1mb3ItbG9jYWwtc3ByaW5nLWJvb3QtYXBwbGljYXRpb25z

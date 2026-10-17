@@ -65,3 +65,16 @@ spring:
           uri: ${MINIO_SERVICE_URL:http://localhost:9005}
           predicates:
             - Path=/spotify-files/**
+
+        # Jam WebSocket (STOMP) — terminate edilir, JWT upgrade'de doğrulanır (ADR-002)
+        - id: jam-ws-route
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/ws/jam/**
+
+application:
+  security:
+    jwt:
+      # auth-service ile paylaşılan HMAC secret (base64). REST'te downstream
+      # doğrular; burada yalnızca WebSocket upgrade'i doğrulanır.
+      secret-key: ${JWT_SECRET_KEY}
