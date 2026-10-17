@@ -25,7 +25,7 @@ public class JamSnapshotEntity {
     @Column(name = "version", nullable = false)
     private long version;
 
-    @Column(name = "value", nullable = false)
+    @Column(name = "snapshot_value", nullable = false)
     private String value;
 
     protected JamSnapshotEntity() {

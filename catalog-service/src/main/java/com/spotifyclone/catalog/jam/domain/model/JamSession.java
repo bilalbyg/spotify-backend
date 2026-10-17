@@ -78,6 +78,31 @@ public final class JamSession {
         return session;
     }
 
+    /**
+     * Reconstructs an existing aggregate from persisted state (used by the
+     * persistence adapter). Does not emit events and starts with an empty
+     * event log.
+     */
+    public static JamSession reconstitute(
+            JamId id,
+            UserId host,
+            Set<UserId> members,
+            List<TrackId> queue,
+            SessionStatus status,
+            InviteLink inviteLink,
+            Set<IdempotencyKey> processedKeys,
+            Map<TrackId, Set<UserId>> skipVotes) {
+        return new JamSession(
+                id,
+                host,
+                new LinkedHashSet<>(members),
+                new ArrayList<>(queue),
+                status,
+                inviteLink,
+                new HashSet<>(processedKeys),
+                new HashMap<>(skipVotes));
+    }
+
     /** Joins a session by presenting the invite link (ADR-006). */
     public void join(UserId user, InviteLink presentedLink) {
         requireActive();
@@ -210,6 +235,18 @@ public final class JamSession {
 
     public InviteLink inviteLink() {
         return inviteLink;
+    }
+
+    /** The idempotency keys already processed for this session (POC-3). */
+    public Set<IdempotencyKey> processedKeys() {
+        return Set.copyOf(processedKeys);
+    }
+
+    /** The current skip votes, keyed by track (ADR-004). */
+    public Map<TrackId, Set<UserId>> skipVotes() {
+        Map<TrackId, Set<UserId>> copy = new HashMap<>();
+        skipVotes.forEach((track, voters) -> copy.put(track, Set.copyOf(voters)));
+        return copy;
     }
 
     /** Drains and clears the accumulated domain events. */
