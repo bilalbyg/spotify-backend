@@ -1,5 +1,6 @@
 package com.spotifyclone.catalog.jam.application.usecase;
 
+import org.springframework.stereotype.Service;
 import com.spotifyclone.catalog.jam.application.port.JamRepository;
 import com.spotifyclone.catalog.jam.application.port.OutboxRepository;
 import com.spotifyclone.catalog.jam.domain.model.InviteLink;
@@ -8,6 +9,7 @@ import com.spotifyclone.catalog.jam.domain.model.JamSession;
 import com.spotifyclone.catalog.jam.domain.model.UserId;
 
 /** Creates a jam session and returns its id and invite link (ADR-006). */
+@Service
 public class CreateSessionUseCase {
 
     private final JamRepository repository;
