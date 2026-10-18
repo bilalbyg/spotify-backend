@@ -72,6 +72,12 @@ spring:
           predicates:
             - Path=/ws/jam/**
 
+        # Jam session lifecycle (REST)
+        - id: jam-sessions-route
+          uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/jam/**
+
 application:
   security:
     jwt:
