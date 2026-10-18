@@ -71,6 +71,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final String email = jwtService.extractEmail(jwt);
             // Token claim alanından rol bilgisini çıkarıyoruz.
             final String role = jwtService.extractRole(jwt);
+            // Token claim alanından kullanıcı UUID'sini çıkarıyoruz.
+            final java.util.UUID userId = jwtService.extractUserId(jwt);
 
             // Role claim'i yoksa yetki üretmeyip isteği kimliksiz bırakıyoruz.
             if (role == null || role.isBlank()) {
@@ -80,10 +82,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // E-posta + rol bilgisinden Spring Security authentication nesnesi oluşturuyoruz.
+            // Kimlik + e-posta + rol bilgisinden Spring Security authentication nesnesi oluşturuyoruz.
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    // Principal olarak kullanıcı e-posta bilgisini veriyoruz.
-                    email,
+                    // Principal olarak kimlik bilgisini (userId + email + role) veriyoruz.
+                    new AuthenticatedUser(userId, email, role),
                     // Credentials tarafını kullanmadığımız için null bırakıyoruz.
                     null,
                     // Rolü "ROLE_X" formatına çevirip authority listesine ekliyoruz.

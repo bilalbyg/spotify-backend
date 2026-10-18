@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.UUID;
 
 @Service
 public class JwtService {
@@ -23,6 +24,12 @@ public class JwtService {
     // Token içine auth-service tarafından eklenen role claim'ini alıyoruz.
     public String extractRole(String token) {
         return extractAllClaims(token).get("role", String.class);
+    }
+
+    // Token içine auth-service tarafından eklenen user id (UUID) claim'ini alıyoruz.
+    public UUID extractUserId(String token) {
+        String uid = extractAllClaims(token).get("uid", String.class);
+        return uid != null ? UUID.fromString(uid) : null;
     }
 
     // Token imza ve format doğrulamasını yapıyoruz; hata varsa token geçersiz kabul edilir.

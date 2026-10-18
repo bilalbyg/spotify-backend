@@ -30,6 +30,7 @@ public class JwtService {
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("role", user.getRole().name())
+                .claim("uid", user.getId().toString())
                 // FIXME no magic string
                 .claim("type", "access")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
