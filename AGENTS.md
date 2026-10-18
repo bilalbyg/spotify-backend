@@ -44,6 +44,9 @@ docker compose -f docker-compose.yml -f docker-compose.deploy.yml --profile manu
   explicit migration/reset step.
 - Verify the gateway and dependent services after deployment before calling
   the release healthy.
+- Commits must use the personal identity `Bilal Beygo <bbeygo.71@gmail.com>`.
+  Never commit with the GitLab/work account (`bmbeygo@netas.com.tr` or any
+  work address).
 
 Read the workspace `llm-wiki/architecture.md`, `delivery.md`, and
 `guardrails.md` for cross-repository contracts.
