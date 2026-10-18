@@ -1,5 +1,6 @@
 package com.spotifyclone.catalog.jam.application.port;
 
+import com.spotifyclone.catalog.jam.domain.model.InviteLink;
 import com.spotifyclone.catalog.jam.domain.model.JamId;
 import com.spotifyclone.catalog.jam.domain.model.JamSession;
 
@@ -13,6 +14,8 @@ import java.util.Optional;
 public interface JamRepository {
 
     Optional<JamSession> findById(JamId id);
+
+    Optional<JamSession> findByInviteLink(InviteLink inviteLink);
 
     void save(JamSession session);
 }

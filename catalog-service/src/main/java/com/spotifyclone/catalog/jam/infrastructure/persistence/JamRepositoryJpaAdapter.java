@@ -1,6 +1,7 @@
 package com.spotifyclone.catalog.jam.infrastructure.persistence;
 
 import com.spotifyclone.catalog.jam.application.port.JamRepository;
+import com.spotifyclone.catalog.jam.domain.model.InviteLink;
 import com.spotifyclone.catalog.jam.domain.model.JamId;
 import com.spotifyclone.catalog.jam.domain.model.JamSession;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,11 @@ public class JamRepositoryJpaAdapter implements JamRepository {
     @Override
     public Optional<JamSession> findById(JamId id) {
         return repository.findById(id.value()).map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<JamSession> findByInviteLink(InviteLink inviteLink) {
+        return repository.findByInviteLink(inviteLink.value()).map(mapper::toDomain);
     }
 
     @Override

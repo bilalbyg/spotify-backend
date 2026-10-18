@@ -50,6 +50,12 @@ public class JamSessionController {
                 new JamId(id), new UserId(request.userId()), new InviteLink(request.inviteLink()));
     }
 
+    @PostMapping("/join")
+    public void joinByInviteLink(@RequestBody JoinByInviteLinkRequest request) {
+        joinSession.executeByInviteLink(
+                new InviteLink(request.inviteLink()), new UserId(request.userId()));
+    }
+
     @PostMapping("/{id}/end")
     public void end(@PathVariable UUID id, @RequestBody EndSessionRequest request) {
         endSession.execute(new JamId(id), new UserId(request.userId()));
@@ -62,6 +68,9 @@ public class JamSessionController {
     }
 
     public record JoinSessionRequest(UUID userId, UUID inviteLink) {
+    }
+
+    public record JoinByInviteLinkRequest(UUID userId, UUID inviteLink) {
     }
 
     public record EndSessionRequest(UUID userId) {

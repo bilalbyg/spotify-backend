@@ -63,6 +63,17 @@ class JamSessionControllerTest {
     }
 
     @Test
+    void joinByInviteLink_dispatchesToInviteLinkJoin() {
+        UserId user = new UserId(UUID.randomUUID());
+        InviteLink link = InviteLink.generate();
+
+        controller.joinByInviteLink(
+                new JamSessionController.JoinByInviteLinkRequest(user.value(), link.value()));
+
+        verify(joinSession).executeByInviteLink(link, user);
+    }
+
+    @Test
     void end_dispatchesToEndUseCase() {
         JamId id = new JamId(UUID.randomUUID());
         UserId user = new UserId(UUID.randomUUID());
