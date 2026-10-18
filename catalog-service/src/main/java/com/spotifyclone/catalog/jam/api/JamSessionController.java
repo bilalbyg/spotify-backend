@@ -6,6 +6,8 @@ import com.spotifyclone.catalog.jam.application.usecase.JoinSessionUseCase;
 import com.spotifyclone.catalog.jam.domain.model.InviteLink;
 import com.spotifyclone.catalog.jam.domain.model.JamId;
 import com.spotifyclone.catalog.jam.domain.model.UserId;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,14 +29,17 @@ public class JamSessionController {
     private final CreateSessionUseCase createSession;
     private final JoinSessionUseCase joinSession;
     private final EndSessionUseCase endSession;
+    private final FixedWindowRateLimiter rateLimiter;
 
     public JamSessionController(
             CreateSessionUseCase createSession,
             JoinSessionUseCase joinSession,
-            EndSessionUseCase endSession) {
+            EndSessionUseCase endSession,
+            FixedWindowRateLimiter rateLimiter) {
         this.createSession = createSession;
         this.joinSession = joinSession;
         this.endSession = endSession;
+        this.rateLimiter = rateLimiter;
     }
 
     @PostMapping
@@ -51,9 +56,13 @@ public class JamSessionController {
     }
 
     @PostMapping("/join")
-    public void joinByInviteLink(@RequestBody JoinByInviteLinkRequest request) {
+    public ResponseEntity<Void> joinByInviteLink(@RequestBody JoinByInviteLinkRequest request) {
+        if (!rateLimiter.allow(request.userId().toString())) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+        }
         joinSession.executeByInviteLink(
                 new InviteLink(request.inviteLink()), new UserId(request.userId()));
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/end")
