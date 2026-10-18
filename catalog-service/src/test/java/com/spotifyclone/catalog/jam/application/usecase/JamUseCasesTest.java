@@ -10,6 +10,8 @@ import com.spotifyclone.catalog.jam.domain.model.JamId;
 import com.spotifyclone.catalog.jam.domain.model.JamSession;
 import com.spotifyclone.catalog.jam.domain.model.TrackId;
 import com.spotifyclone.catalog.jam.domain.model.UserId;
+import com.spotifyclone.catalog.jam.infrastructure.metrics.JamMetrics;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.when;
 class JamUseCasesTest {
 
     private final UserId host = new UserId(UUID.randomUUID());
+    private final JamMetrics metrics = new JamMetrics(new SimpleMeterRegistry());
 
     /** Simple in-memory outbox for asserting published events. */
     private static final class RecordingOutbox implements OutboxRepository {
@@ -47,7 +50,7 @@ class JamUseCasesTest {
     void createSession_savesAndPublishesSessionCreated() {
         JamRepository repository = mock(JamRepository.class);
         RecordingOutbox outbox = new RecordingOutbox();
-        CreateSessionUseCase useCase = new CreateSessionUseCase(repository, outbox);
+        CreateSessionUseCase useCase = new CreateSessionUseCase(repository, outbox, metrics);
 
         CreateSessionUseCase.CreateSessionResult result = useCase.execute(host);
 
@@ -94,7 +97,7 @@ class JamUseCasesTest {
     void castSkipVote_hostSkip_publishesSkipped() {
         JamRepository repository = mock(JamRepository.class);
         RecordingOutbox outbox = new RecordingOutbox();
-        CastSkipVoteUseCase useCase = new CastSkipVoteUseCase(repository, outbox);
+        CastSkipVoteUseCase useCase = new CastSkipVoteUseCase(repository, outbox, metrics);
 
         JamSession session = sessionFor(repository, JamSession.create(host, InviteLink.generate()));
         TrackId first = new TrackId(UUID.randomUUID());
