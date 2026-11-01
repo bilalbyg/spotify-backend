@@ -10,26 +10,30 @@ import com.spotifyclone.catalog.jam.domain.model.JamId;
 import com.spotifyclone.catalog.jam.domain.model.JamSession;
 import com.spotifyclone.catalog.jam.domain.model.TrackId;
 import com.spotifyclone.catalog.jam.domain.model.UserId;
-import com.spotifyclone.catalog.jam.infrastructure.metrics.JamMetrics;
+import com.spotifyclone.catalog.jam.infrastructure.metrics.MicrometerJamMetrics;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.OptimisticLockingFailureException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.spotifyclone.catalog.jam.application.usecase.OptimisticUnitOfWorkTest.unitOfWork;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class JamUseCasesTest {
 
     private final UserId host = new UserId(UUID.randomUUID());
-    private final JamMetrics metrics = new JamMetrics(new SimpleMeterRegistry());
+    private final MicrometerJamMetrics metrics = new MicrometerJamMetrics(new SimpleMeterRegistry());
 
     /** Simple in-memory outbox for asserting published events. */
     private static final class RecordingOutbox implements OutboxRepository {
@@ -50,7 +54,7 @@ class JamUseCasesTest {
     void createSession_savesAndPublishesSessionCreated() {
         JamRepository repository = mock(JamRepository.class);
         RecordingOutbox outbox = new RecordingOutbox();
-        CreateSessionUseCase useCase = new CreateSessionUseCase(repository, outbox, metrics);
+        CreateSessionUseCase useCase = new CreateSessionUseCase(repository, outbox, unitOfWork(), metrics);
 
         CreateSessionUseCase.CreateSessionResult result = useCase.execute(host);
 
@@ -64,7 +68,7 @@ class JamUseCasesTest {
     void addTrack_appendsToQueueAndPublishesEvent() {
         JamRepository repository = mock(JamRepository.class);
         RecordingOutbox outbox = new RecordingOutbox();
-        AddTrackUseCase useCase = new AddTrackUseCase(repository, outbox);
+        AddTrackUseCase useCase = new AddTrackUseCase(repository, outbox, unitOfWork());
 
         JamSession session = sessionFor(repository, JamSession.create(host, InviteLink.generate()));
         TrackId track = new TrackId(UUID.randomUUID());
@@ -79,7 +83,7 @@ class JamUseCasesTest {
     void addTrack_idempotentByKey_publishesSingleEvent() {
         JamRepository repository = mock(JamRepository.class);
         RecordingOutbox outbox = new RecordingOutbox();
-        AddTrackUseCase useCase = new AddTrackUseCase(repository, outbox);
+        AddTrackUseCase useCase = new AddTrackUseCase(repository, outbox, unitOfWork());
 
         JamSession session = sessionFor(repository, JamSession.create(host, InviteLink.generate()));
         TrackId track = new TrackId(UUID.randomUUID());
@@ -94,10 +98,33 @@ class JamUseCasesTest {
     }
 
     @Test
+    void addTrack_retriesWholeUnitAfterOptimisticLockConflict() {
+        JamRepository repository = mock(JamRepository.class);
+        RecordingOutbox outbox = new RecordingOutbox();
+        AddTrackUseCase useCase = new AddTrackUseCase(repository, outbox, unitOfWork());
+
+        JamSession session = sessionFor(repository, JamSession.create(host, InviteLink.generate()));
+        TrackId track = new TrackId(UUID.randomUUID());
+        IdempotencyKey key = new IdempotencyKey(UUID.randomUUID());
+
+        // First commit conflicts (POC-1); the retry reloads and re-applies.
+        doThrow(new OptimisticLockingFailureException("row updated concurrently"))
+                .doNothing()
+                .when(repository).save(any(JamSession.class));
+
+        useCase.execute(session.id(), host, track, key);
+
+        verify(repository, times(2)).findById(session.id());
+        verify(repository, times(2)).save(any(JamSession.class));
+        // The replay sees the idempotency key already applied and stays a no-op.
+        assertThat(session.queue()).hasSize(1);
+    }
+
+    @Test
     void castSkipVote_hostSkip_publishesSkipped() {
         JamRepository repository = mock(JamRepository.class);
         RecordingOutbox outbox = new RecordingOutbox();
-        CastSkipVoteUseCase useCase = new CastSkipVoteUseCase(repository, outbox, metrics);
+        CastSkipVoteUseCase useCase = new CastSkipVoteUseCase(repository, outbox, unitOfWork(), metrics);
 
         JamSession session = sessionFor(repository, JamSession.create(host, InviteLink.generate()));
         TrackId first = new TrackId(UUID.randomUUID());
@@ -115,7 +142,7 @@ class JamUseCasesTest {
     void transferHost_publishesHostTransferred() {
         JamRepository repository = mock(JamRepository.class);
         RecordingOutbox outbox = new RecordingOutbox();
-        TransferHostUseCase useCase = new TransferHostUseCase(repository, outbox);
+        TransferHostUseCase useCase = new TransferHostUseCase(repository, outbox, unitOfWork());
 
         JamSession session = sessionFor(repository, JamSession.create(host, InviteLink.generate()));
         UserId newHost = new UserId(UUID.randomUUID());
@@ -131,7 +158,7 @@ class JamUseCasesTest {
     void endSession_publishesSessionEnded() {
         JamRepository repository = mock(JamRepository.class);
         RecordingOutbox outbox = new RecordingOutbox();
-        EndSessionUseCase useCase = new EndSessionUseCase(repository, outbox);
+        EndSessionUseCase useCase = new EndSessionUseCase(repository, outbox, unitOfWork());
 
         JamSession session = sessionFor(repository, JamSession.create(host, InviteLink.generate()));
 
@@ -145,7 +172,7 @@ class JamUseCasesTest {
     void useCase_onMissingSession_throwsSessionNotFound() {
         JamRepository repository = mock(JamRepository.class);
         RecordingOutbox outbox = new RecordingOutbox();
-        AddTrackUseCase useCase = new AddTrackUseCase(repository, outbox);
+        AddTrackUseCase useCase = new AddTrackUseCase(repository, outbox, unitOfWork());
 
         JamId missing = new JamId(UUID.randomUUID());
         when(repository.findById(missing)).thenReturn(Optional.empty());

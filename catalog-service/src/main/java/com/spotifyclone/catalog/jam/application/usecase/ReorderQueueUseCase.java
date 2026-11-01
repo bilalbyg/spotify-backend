@@ -1,7 +1,5 @@
 package com.spotifyclone.catalog.jam.application.usecase;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.spotifyclone.catalog.jam.application.exception.SessionNotFoundException;
 import com.spotifyclone.catalog.jam.application.port.JamRepository;
 import com.spotifyclone.catalog.jam.application.port.OutboxRepository;
@@ -9,6 +7,7 @@ import com.spotifyclone.catalog.jam.domain.model.JamId;
 import com.spotifyclone.catalog.jam.domain.model.JamSession;
 import com.spotifyclone.catalog.jam.domain.model.TrackId;
 import com.spotifyclone.catalog.jam.domain.model.UserId;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -18,19 +17,21 @@ public class ReorderQueueUseCase {
 
     private final JamRepository repository;
     private final OutboxRepository outbox;
+    private final OptimisticUnitOfWork unitOfWork;
 
-    public ReorderQueueUseCase(JamRepository repository, OutboxRepository outbox) {
+    public ReorderQueueUseCase(JamRepository repository, OutboxRepository outbox, OptimisticUnitOfWork unitOfWork) {
         this.repository = repository;
         this.outbox = outbox;
+        this.unitOfWork = unitOfWork;
     }
 
-    @Transactional
-
     public void execute(JamId sessionId, UserId actor, List<TrackId> ordered) {
-        JamSession session = repository.findById(sessionId)
-                .orElseThrow(() -> new SessionNotFoundException(sessionId));
-        session.reorderQueue(actor, ordered);
-        repository.save(session);
-        session.drainEvents().forEach(outbox::append);
+        unitOfWork.executeWithoutResult(() -> {
+            JamSession session = repository.findById(sessionId)
+                    .orElseThrow(() -> new SessionNotFoundException(sessionId));
+            session.reorderQueue(actor, ordered);
+            repository.save(session);
+            session.drainEvents().forEach(outbox::append);
+        });
     }
 }
