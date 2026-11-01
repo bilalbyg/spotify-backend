@@ -130,13 +130,22 @@ public final class JamSession {
     public void reorderQueue(UserId actor, List<TrackId> ordered) {
         requireActive();
         requireMember(actor);
-        if (ordered.size() != queue.size()
-                || !new HashSet<>(ordered).containsAll(queue)) {
+        // Multiset comparison: a queue with duplicates ([A,A,B]) must not accept
+        // a same-size, same-set list containing foreign tracks ([A,B,X]).
+        Map<TrackId, Long> requested = frequencyOf(ordered);
+        Map<TrackId, Long> current = frequencyOf(queue);
+        if (!requested.equals(current)) {
             throw new IllegalArgumentException("reorder must be a permutation of the queue");
         }
         queue.clear();
         queue.addAll(ordered);
         events.add(new JamEvent.QueueReordered(id, List.copyOf(queue), actor));
+    }
+
+    private static Map<TrackId, Long> frequencyOf(List<TrackId> tracks) {
+        Map<TrackId, Long> frequency = new HashMap<>();
+        tracks.forEach(track -> frequency.merge(track, 1L, Long::sum));
+        return frequency;
     }
 
     /**
@@ -146,6 +155,12 @@ public final class JamSession {
     public void castSkipVote(UserId actor, TrackId track) {
         requireActive();
         requireMember(actor);
+        // Skip is defined on the queue head only (POC-7 atomicity): without this
+        // guard a threshold reached on a stale track would remove the head while
+        // the Skipped event names a different track.
+        if (currentTrack() == null || !currentTrack().equals(track)) {
+            throw new IllegalArgumentException("skip vote must target the current track");
+        }
         if (actor.equals(host)) {
             advanceQueue(track);
             return;

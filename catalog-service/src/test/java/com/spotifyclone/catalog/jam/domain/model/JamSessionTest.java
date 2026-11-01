@@ -141,6 +141,79 @@ class JamSessionTest {
     }
 
     @Test
+    void castSkipVote_RejectsVoteForNonCurrentTrack() {
+        JamSession session = newSession();
+        UserId m1 = join(session, new UserId(UUID.randomUUID()));
+        TrackId current = new TrackId(UUID.randomUUID());
+        TrackId next = new TrackId(UUID.randomUUID());
+        session.addTrack(host, current, new IdempotencyKey(UUID.randomUUID()));
+        session.addTrack(host, next, new IdempotencyKey(UUID.randomUUID()));
+
+        // A vote for anything but the head must not be recorded; otherwise the
+        // threshold could skip the head while the event names another track.
+        assertThatThrownBy(() -> session.castSkipVote(m1, next))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("current track");
+
+        assertThat(session.skipVotes()).isEmpty();
+        assertThat(session.currentTrack()).isEqualTo(current);
+    }
+
+    @Test
+    void castSkipVote_HostCannotSkipNonCurrentTrack() {
+        JamSession session = newSession();
+        TrackId current = new TrackId(UUID.randomUUID());
+        TrackId next = new TrackId(UUID.randomUUID());
+        session.addTrack(host, current, new IdempotencyKey(UUID.randomUUID()));
+        session.addTrack(host, next, new IdempotencyKey(UUID.randomUUID()));
+
+        assertThatThrownBy(() -> session.castSkipVote(host, next))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("current track");
+
+        assertThat(session.queue()).containsExactly(current, next);
+    }
+
+    @Test
+    void castSkipVote_OnEmptyQueue_Throws() {
+        JamSession session = newSession();
+
+        assertThatThrownBy(() -> session.castSkipVote(host, new TrackId(UUID.randomUUID())))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("current track");
+    }
+
+    @Test
+    void reorderQueue_WithDuplicateTracks_RejectsForeignTracks() {
+        JamSession session = newSession();
+        TrackId a = new TrackId(UUID.randomUUID());
+        TrackId b = new TrackId(UUID.randomUUID());
+        session.addTrack(host, a, new IdempotencyKey(UUID.randomUUID()));
+        session.addTrack(host, a, new IdempotencyKey(UUID.randomUUID()));
+        session.addTrack(host, b, new IdempotencyKey(UUID.randomUUID()));
+
+        // Same size, same set — but X was never queued: multiset check must reject.
+        assertThatThrownBy(() ->
+                session.reorderQueue(host, List.of(a, b, new TrackId(UUID.randomUUID()))))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("permutation");
+    }
+
+    @Test
+    void reorderQueue_WithDuplicateTracks_AcceptsTruePermutation() {
+        JamSession session = newSession();
+        TrackId a = new TrackId(UUID.randomUUID());
+        TrackId b = new TrackId(UUID.randomUUID());
+        session.addTrack(host, a, new IdempotencyKey(UUID.randomUUID()));
+        session.addTrack(host, a, new IdempotencyKey(UUID.randomUUID()));
+        session.addTrack(host, b, new IdempotencyKey(UUID.randomUUID()));
+
+        session.reorderQueue(host, List.of(b, a, a));
+
+        assertThat(session.queue()).containsExactly(b, a, a);
+    }
+
+    @Test
     void transferHost_RequiresHost_AndMember() {
         JamSession session = newSession();
         UserId newHost = join(session, new UserId(UUID.randomUUID()));
