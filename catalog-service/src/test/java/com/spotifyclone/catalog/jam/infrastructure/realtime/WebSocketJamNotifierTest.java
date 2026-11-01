@@ -27,4 +27,14 @@ class WebSocketJamNotifierTest {
 
         verify(template).convertAndSend("/topic/session/" + sessionId.value(), event);
     }
+
+    @Test
+    void notifyRaw_broadcastsPayloadToSessionTopic() {
+        JamId sessionId = new JamId(UUID.randomUUID());
+        String payload = "{\"type\":\"TrackQueued\"}";
+
+        notifier.notifyRaw(sessionId, payload);
+
+        verify(template).convertAndSend("/topic/session/" + sessionId.value(), payload);
+    }
 }

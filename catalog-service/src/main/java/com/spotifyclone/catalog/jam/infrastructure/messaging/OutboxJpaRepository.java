@@ -8,5 +8,6 @@ import java.util.UUID;
 /** Spring Data repository for the jam outbox. */
 public interface OutboxJpaRepository extends JpaRepository<OutboxJpaEntity, UUID> {
 
-    List<OutboxJpaEntity> findByProcessedAtIsNullOrderByCreatedAtAsc();
+    /** Bounded batch: a backed-up outbox must not be loaded into memory wholesale. */
+    List<OutboxJpaEntity> findTop100ByProcessedAtIsNullOrderByCreatedAtAsc();
 }

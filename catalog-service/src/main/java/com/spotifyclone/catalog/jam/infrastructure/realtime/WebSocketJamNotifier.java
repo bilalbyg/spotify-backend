@@ -2,6 +2,7 @@ package com.spotifyclone.catalog.jam.infrastructure.realtime;
 
 import com.spotifyclone.catalog.jam.application.port.JamNotifier;
 import com.spotifyclone.catalog.jam.domain.event.JamEvent;
+import com.spotifyclone.catalog.jam.domain.model.JamId;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -23,5 +24,11 @@ public class WebSocketJamNotifier implements JamNotifier {
     public void notify(JamEvent event) {
         String destination = "/topic/session/" + event.sessionId().value();
         template.convertAndSend(destination, event);
+    }
+
+    @Override
+    public void notifyRaw(JamId sessionId, String payload) {
+        String destination = "/topic/session/" + sessionId.value();
+        template.convertAndSend(destination, payload);
     }
 }

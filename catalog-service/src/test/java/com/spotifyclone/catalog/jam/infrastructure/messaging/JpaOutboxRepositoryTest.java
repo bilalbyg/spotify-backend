@@ -41,7 +41,7 @@ class JpaOutboxRepositoryTest {
 
         outbox.append(event);
 
-        List<OutboxJpaEntity> unprocessed = jpaRepository.findByProcessedAtIsNullOrderByCreatedAtAsc();
+        List<OutboxJpaEntity> unprocessed = jpaRepository.findTop100ByProcessedAtIsNullOrderByCreatedAtAsc();
         assertThat(unprocessed).hasSize(1);
         assertThat(unprocessed.get(0).getEventType()).isEqualTo("TrackQueued");
         assertThat(unprocessed.get(0).getPayload()).contains("sessionId");
