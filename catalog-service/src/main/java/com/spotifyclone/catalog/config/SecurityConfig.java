@@ -71,6 +71,10 @@ public class SecurityConfig {
                                 "/api/v1/episodes/**",
                                 "/api/v1/genres/**",
                                 "/api/v1/lyrics/**").authenticated()
+                        // Jam kullanıcıya dönük bir özellik: geçerli bir JWT (herhangi
+                        // bir rol) yeterli; admin catch-all kuralı dışında tutulur.
+                        .requestMatchers("/api/v1/jam/**").authenticated()
+                        .requestMatchers("/ws/jam/**").authenticated()
                         // Tanımlı tüm istekler ADMIN yetkisi gerektirir.
                         .anyRequest().hasAuthority(Constants.ROLE_ADMIN)
                 )

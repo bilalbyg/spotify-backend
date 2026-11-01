@@ -75,17 +75,22 @@ class JamSessionControllerTest {
     }
 
     @Test
-    void joinByInviteLink_sourcesActorFromPrincipal() {
+    void joinByInviteLink_sourcesActorFromPrincipal_andReturnsSessionId() {
         UUID userId = UUID.randomUUID();
         InviteLink link = InviteLink.generate();
+        JamId sessionId = new JamId(UUID.randomUUID());
         authenticateAs(userId);
         when(rateLimiter.allow(userId.toString())).thenReturn(true);
+        when(joinSession.executeByInviteLink(link, new UserId(userId))).thenReturn(sessionId);
 
         var response = controller.joinByInviteLink(
                 new JamSessionController.JoinByInviteLinkRequest(link.value()));
 
         verify(joinSession).executeByInviteLink(link, new UserId(userId));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        // The client needs the session id to subscribe to the session topic.
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().sessionId()).isEqualTo(sessionId.value());
     }
 
     @Test

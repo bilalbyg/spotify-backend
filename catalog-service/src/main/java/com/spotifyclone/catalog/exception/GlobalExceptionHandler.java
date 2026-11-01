@@ -1,7 +1,15 @@
 package com.spotifyclone.catalog.exception;
 
+import com.spotifyclone.catalog.jam.application.exception.InviteLinkNotFoundException;
+import com.spotifyclone.catalog.jam.application.exception.SessionNotFoundException;
+import com.spotifyclone.catalog.jam.domain.exception.InviteLinkInvalidException;
+import com.spotifyclone.catalog.jam.domain.exception.NotHostException;
+import com.spotifyclone.catalog.jam.domain.exception.NotMemberException;
+import com.spotifyclone.catalog.jam.domain.exception.SessionNotActiveException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +23,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
@@ -62,8 +71,38 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
+    // --- Jam bounded context: clients must be able to distinguish "unknown
+    // --- resource" (404) from "not allowed" (403) from "state conflict" (409).
+
+    @ExceptionHandler({SessionNotFoundException.class, InviteLinkNotFoundException.class})
+    public ResponseEntity<Object> handleJamNotFound(RuntimeException ex) {
+        return jamError(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler({NotHostException.class, NotMemberException.class})
+    public ResponseEntity<Object> handleJamForbidden(RuntimeException ex) {
+        return jamError(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    @ExceptionHandler({
+            SessionNotActiveException.class,
+            InviteLinkInvalidException.class,
+            OptimisticLockingFailureException.class})
+    public ResponseEntity<Object> handleJamConflict(RuntimeException ex) {
+        return jamError(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    private ResponseEntity<Object> jamError(HttpStatus status, String message) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", status.value());
+        body.put("message", message);
+        return new ResponseEntity<>(body, status);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGeneralException(Exception ex, Locale locale) {
+        log.error("Unhandled exception", ex);
         Map<String, Object> body = new HashMap<>();
 
         String translatedMessage = messageSource.getMessage("generic.error", null, locale);

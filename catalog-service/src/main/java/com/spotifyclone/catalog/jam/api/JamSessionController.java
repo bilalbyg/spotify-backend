@@ -52,13 +52,14 @@ public class JamSessionController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<Void> joinByInviteLink(@RequestBody JoinByInviteLinkRequest request) {
+    public ResponseEntity<JoinByInviteLinkResponse> joinByInviteLink(@RequestBody JoinByInviteLinkRequest request) {
         UserId user = authenticatedUser();
         if (!rateLimiter.allow(user.value().toString())) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
         }
-        joinSession.executeByInviteLink(new InviteLink(request.inviteLink()), user);
-        return ResponseEntity.ok().build();
+        JamId sessionId = joinSession.executeByInviteLink(new InviteLink(request.inviteLink()), user);
+        // The client needs the session id to subscribe to /topic/session/{id}.
+        return ResponseEntity.ok(new JoinByInviteLinkResponse(sessionId.value()));
     }
 
     @PostMapping("/{id}/end")
@@ -80,5 +81,8 @@ public class JamSessionController {
     }
 
     public record JoinByInviteLinkRequest(UUID inviteLink) {
+    }
+
+    public record JoinByInviteLinkResponse(UUID sessionId) {
     }
 }
