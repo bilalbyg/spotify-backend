@@ -12,8 +12,10 @@ import com.spotifyclone.catalog.jam.domain.model.UserId;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -44,21 +46,41 @@ public class JamStompController {
     }
 
     @MessageMapping("/session/{sessionId}/command")
-    public void command(@DestinationVariable UUID sessionId, @Payload JamCommand command) {
+    public void command(
+            @DestinationVariable UUID sessionId,
+            @Payload JamCommand command,
+            SimpMessageHeaderAccessor headers) {
         JamId id = new JamId(sessionId);
+        UserId actor = authenticatedActor(headers);
         switch (command.type()) {
             case JamCommand.ADD_TRACK -> addTrack.execute(
-                    id, new UserId(command.actor()), new TrackId(command.track()),
+                    id, actor, new TrackId(command.track()),
                     new IdempotencyKey(command.idempotencyKey()));
             case JamCommand.REORDER -> reorderQueue.execute(
-                    id, new UserId(command.actor()),
+                    id, actor,
                     command.order().stream().map(TrackId::new).toList());
             case JamCommand.SKIP -> castSkipVote.execute(
-                    id, new UserId(command.actor()), new TrackId(command.track()));
+                    id, actor, new TrackId(command.track()));
             case JamCommand.TRANSFER_HOST -> transferHost.execute(
-                    id, new UserId(command.actor()), new UserId(command.newHost()));
-            case JamCommand.END -> endSession.execute(id, new UserId(command.actor()));
+                    id, actor, new UserId(command.newHost()));
+            case JamCommand.END -> endSession.execute(id, actor);
             default -> throw new IllegalArgumentException("unknown command type: " + command.type());
         }
+    }
+
+    /**
+     * The only trusted source of actor identity on the command channel: the
+     * handshake-authenticated user id stored in the STOMP session by
+     * {@link JamHandshakeInterceptor}. The command payload is never consulted.
+     */
+    private UserId authenticatedActor(SimpMessageHeaderAccessor headers) {
+        Map<String, Object> sessionAttributes = headers.getSessionAttributes();
+        Object userId = sessionAttributes == null
+                ? null
+                : sessionAttributes.get(JamHandshakeInterceptor.USER_ID_ATTRIBUTE);
+        if (userId == null) {
+            throw new IllegalStateException("no authenticated user in the STOMP session");
+        }
+        return new UserId(UUID.fromString(userId.toString()));
     }
 }

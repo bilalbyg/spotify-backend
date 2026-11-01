@@ -6,11 +6,12 @@ import java.util.UUID;
 /**
  * A STOMP command payload received on {@code /app/session/{id}/command}.
  * Raw UUIDs (JSON-friendly) rather than domain value objects; the controller
- * wraps them and dispatches to the matching use case.
+ * wraps them and dispatches to the matching use case. Carries no actor field:
+ * the actor identity comes exclusively from the handshake-authenticated STOMP
+ * session ({@link JamHandshakeInterceptor}), never from the payload.
  */
 public record JamCommand(
         String type,
-        UUID actor,
         UUID track,
         List<UUID> order,
         UUID newHost,
