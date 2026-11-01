@@ -7,20 +7,31 @@
 # POCs must exercise real MVCC + optimistic-lock behaviour, which H2 cannot
 # faithfully reproduce.
 #
+# Schema isolation: all DDL runs inside the dedicated `jam_poc` schema
+# (currentSchema + hbm2ddl.create_namespaces), so `create-drop` never touches
+# the shared dev tables in `public` — running the test suite is safe for local
+# development data.
+#
 # Precondition: docker compose up -d catalog-postgresql (or the full infra).
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/spotify_catalog
+    url: jdbc:postgresql://localhost:5433/spotify_catalog?currentSchema=jam_poc
     username: spotify_catalog_user
     password: spotify_catalog_password
     driver-class-name: org.postgresql.Driver
+    hikari:
+      # The poc schema must exist before any DDL runs on a fresh connection
+      # (hbm2ddl's create_namespaces only covers schemas named in mappings).
+      connection-init-sql: CREATE SCHEMA IF NOT EXISTS jam_poc
   jpa:
     hibernate:
       ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          create_namespaces: true
     show-sql: false
     open-in-view: false
 

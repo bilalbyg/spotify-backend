@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class JamMetricsTest {
+class MicrometerJamMetricsTest {
 
     @Test
     void counters_areRegisteredAndIncrement() {
         SimpleMeterRegistry registry = new SimpleMeterRegistry();
-        JamMetrics metrics = new JamMetrics(registry);
+        MicrometerJamMetrics metrics = new MicrometerJamMetrics(registry);
 
         metrics.sessionCreated();
         metrics.skipVoted();
